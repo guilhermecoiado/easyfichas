@@ -1,0 +1,215 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+    --primary: #6C63FF; --secondary: #4285F4; --success: #25D366;
+    --tag-bg: #FEF7E0; --tag-text: #614C19; --bg-body: #f5f5f5;
+    --start: #FF9800; --diflen: #2196F3; --familia: #4CAF50;
+}
+body { font-family: system-ui, sans-serif; background: var(--bg-body); padding-bottom: 110px; overflow-x: hidden; }
+header { background: white; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
+.header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.brand { display: flex; align-items: center; gap: 8px; }
+.title { font-size: 20px; font-weight: 800; }
+#rede-indicator { font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 10px; color: white; display: none; text-transform: uppercase; }
+
+.fav-btn-top { background: #FFF9E6; border: none; color: #FFD600; padding: 8px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; }
+.fav-btn-top i { width: 18px; height: 18px; fill: #FFD600; }
+.export-btn-top { border: none; background: #f0f0ff; color: var(--primary); padding: 8px 12px; border-radius: 10px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px; }
+
+#search { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ddd; background: #f9f9f9; outline: none; }
+
+.card { background: white; border-radius: 16px; padding: 16px; margin: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; overflow: hidden; }
+.rede-highlight { position: absolute; top: 0; left: 0; right: 0; height: 5px; }
+.card-header { display: flex; justify-content: space-between; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; margin-bottom: 10px; }
+.name { font-size: 17px; font-weight: 700; }
+
+.tag-rede { color: white; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
+.info-row { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #666; margin-bottom: 4px; }
+.info-row i { width: 14px; height: 14px; color: var(--secondary); }
+
+.tags-group { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+.tag { background: var(--tag-bg); color: var(--tag-text); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+
+.actions { display: flex; gap: 5px; margin-top: 10px; }
+.actions button { flex: 1; border: none; border-radius: 8px; padding: 8px 2px; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; }
+.whatsapp { background: var(--success); color: white; }
+.map { background: var(--secondary); color: white; }
+.share { background: var(--primary); color: white; }
+
+
+/* Botão de Favoritos no Topo */
+.fav-btn-top {
+    background: #FFF9E6;
+    border: none;
+    color: #FFD600;
+    padding: 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+.fav-btn-top i {
+    width: 20px;
+    height: 20px;
+    fill: #FFD600; /* Estrela do topo sempre preenchida */
+}
+
+/* Botão de Estrela no Card */
+.star {
+    background: #f8f9fa !important;
+    min-width: 45px !important;
+    max-width: 45px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.star i {
+    width: 18px !important;
+    height: 18px !important;
+    color: #ccc; /* Cor da borda quando inativo */
+    transition: all 0.2s ease;
+}
+
+/* A CLASSE QUE FAZ A MÁGICA VISUAL */
+.fav-active {
+    fill: #FFD600 !important; /* Preenche o fundo da estrela */
+    color: #FFD600 !important; /* Muda a cor da borda da estrela */
+}
+
+.bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: white; display: flex; justify-content: space-around; padding: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 25px; z-index: 2000; }
+.nav-item { border: none; background: none; display: flex; flex-direction: column; align-items: center; color: #888; flex: 1; gap: 2px; }
+.nav-item i { width: 20px; }
+.nav-label { font-size: 9px; font-weight: 700; }
+.nav-main-button { background: #437645; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; margin-top: -30px; border: 4px solid var(--bg-body); box-shadow: 0 5px 10px rgba(0,0,0,0.1); }
+
+.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 3000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
+.modal-content { background: white; width: 100%; max-width: 400px; border-radius: 20px; padding: 20px; max-height: 80vh; overflow-y: auto; }
+.filter-input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 8px; }
+.btn-import-opt { background: #f8f9fa; border: 1px solid #ddd; padding: 12px; border-radius: 10px; font-weight: 700; text-align: center; }
+/* Botão de Expansão (Olhinho) sem fundo e sem borda */
+.view-btn {
+    background: none !important; /* Remove o fundo lilás/cinza */
+    border: none !important;     /* Remove qualquer borda */
+    padding: 0;                  /* Remove o espaçamento interno */
+    cursor: pointer;
+    color: var(--primary);       /* Mantém a cor do ícone */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;               /* Remove o destaque ao clicar */
+}
+
+.view-btn i {
+    width: 24px;                 /* Ajuste o tamanho do ícone se necessário */
+    height: 24px;
+}
+.view-btn:hover {
+    opacity: 0.7;
+    transform: scale(1.1);
+    transition: 0.2s;
+}
+
+/* Overlay que cobre a tela toda */
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9); /* Fundo quase opaco */
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999; /* Valor altíssimo para ficar na frente de tudo */
+    transition: opacity 0.4s ease, visibility 0.4s;
+}
+
+/* Quando escondido */
+.loader-hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loader-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: var(--primary);
+    font-weight: bold;
+}
+
+.spin-icon {
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+/* Cores sutis por tipo de planilha */
+.card-life-groups {
+    background-color: #ffffff !important; /* Branco padrão */
+}
+
+.card-novo-nascimento {
+    background-color: #f0f7ff !important; /* Azul bem claro */
+    border-left: 4px solid #2196F3;
+}
+
+.card-decisao-online {
+    background-color: #fff9f0 !important; /* Laranja/Bege bem claro */
+    border-left: 4px solid #FF9800;
+}
+
+/* Ajuste para que o destaque da rede não suma */
+.rede-highlight {
+    z-index: 1;
+}
+.summary-shortcuts {
+    display: flex;
+    gap: 12px;
+    padding: 10px 16px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.shortcut-card {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.shortcut-card:active { transform: scale(0.96); }
+
+/* Cores baseadas na sua imagem */
+.lifegroups { background-color: #E8EBF7; color: #3F51B5; }
+.decisao { background-color: #F3E5F5; color: #7B1FA2; }
+
+.shortcut-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.shortcut-content i { width: 18px; height: 18px; }
+.shortcut-content span { font-weight: 700; font-size: 13px; }
+
+.badge {
+    background: rgba(0, 0, 0, 0.2);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 800;
+}

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>easyfichas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <div class="header-top">
+        <div class="brand">
+            <i data-lucide="file-text" class="logo-icon"></i>
+            <div class="title" id="title">easyfichas</div>
+            <div id="rede-indicator"></div>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <button class="fav-btn-top" onclick="showFavorites()" title="Favoritos">
+                <i data-lucide="star"></i>
+            </button>
+            <button class="export-btn-top" onclick="exportar()">
+                <i data-lucide="download"></i>
+                <span>Exportar</span>
+            </button>
+        </div>
+    </div>
+    <input id="search" placeholder="Buscar nome ou bairro">
+</header>
+<div id="loader-container" class="loader-overlay">
+    <div class="loader-content">
+        <i data-lucide="loader-2" class="spin-icon"></i>
+        <span>Carregando fichas...</span>
+    </div>
+</div>
+<div class="summary-shortcuts">
+    <div class="shortcut-card lifegroups" onclick="filtrarPorPlanilhaRapido('lifegroups')">
+        <div class="shortcut-content">
+            <i data-lucide="bar-chart-2"></i>
+            <span>Lifegroups</span>
+        </div>
+        <span class="badge" id="count-lifegroups">0</span>
+    </div>
+
+    <div class="shortcut-card decisao" onclick="filtrarPorPlanilhaRapido('decisao')">
+        <div class="shortcut-content">
+            <i data-lucide="sparkles"></i>
+            <span>Novo Nascimento</span>
+        </div>
+        <span class="badge" id="count-decisao">0</span>
+    </div>
+</div>
+<div id="cards"></div>
+
+<nav class="bottom-nav">
+    <button class="nav-item active" id="nav-home" onclick="home()">
+        <i data-lucide="home"></i>
+        <span class="nav-label">Home</span>
+    </button>
+    <button class="nav-item" onclick="openFilter()">
+        <i data-lucide="filter"></i>
+        <span class="nav-label">Filtrar</span>
+    </button>
+    
+    <div class="nav-main-button" onclick="importPlanilha()">
+        <i data-lucide="plus"></i>
+    </div>
+
+    <button class="nav-item" onclick="showSent()">
+        <i data-lucide="send"></i>
+        <span class="nav-label">Enviadas</span>
+    </button>
+    <button class="nav-item" id="btn-rede-toggle" onclick="toggleRede()">
+        <i data-lucide="layers"></i>
+        <span class="nav-label">Rede</span>
+    </button>
+</nav>
+
+<input type="file" id="fileInput" hidden>
+
+<div id="modal-ficha" class="modal" onclick="if(event.target == this) fecharModal()">
+    <div class="modal-content"><div id="modal-body"></div></div>
+</div>
+
+<div id="modal-filtros" class="modal" onclick="if(event.target == this) fecharFiltros()">
+    <div class="modal-content">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h2 style="margin:0; font-size:18px;">Filtrar</h2>
+            <button onclick="fecharFiltros()" style="background:none; border:none; font-size:22px;">&times;</button>
+        </div>
+        <div id="filter-form" style="display:flex; flex-direction:column; gap:12px;">
+            <select id="filter-bairro" class="filter-input"><option value="">Bairro (Todos)</option></select>
+            <select id="filter-sexo" class="filter-input"><option value="">Sexo (Todos)</option></select>
+            <select id="filter-civil" class="filter-input"><option value="">Estado Civil (Todos)</option></select>
+            <select id="filter-dia" class="filter-input"><option value="">Melhor dia (Todos)</option></select>
+            <select id="filter-pastor" class="filter-input"><option value="">Pastor (Todos)</option></select>
+            <select id="filter-planilha" class="filter-input">
+    <option value="">Planilha (Todas)</option>
+    <option value="lifegroups">Lifegroups</option>
+    <option value="decisao">Decisão por Jesus</option>
+</select>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <button onclick="limparFiltros()" style="flex:1; background:#eee; padding:12px; border-radius:10px;">Limpar</button>
+                <button onclick="aplicarFiltros()" style="flex:2; background:var(--primary); color:white; padding:12px; border-radius:10px;">Aplicar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal-importar" class="modal" onclick="if(event.target == this) fecharImportar()">
+    <div class="modal-content" style="max-width: 350px;">
+        <h2 style="margin:0 0 20px 0; font-size:18px; text-align:center;">Importar Planilha</h2>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <button class="btn-import-opt" onclick="selecionarArquivo('LIFE_GROUPS_MASTER')">Life Groups</button>
+            <button class="btn-import-opt" onclick="selecionarArquivo('NOVO_NASCIMENTO_MASTER')">Novo Nascimento</button>
+            <button class="btn-import-opt" onclick="selecionarArquivo('DECISAO_POR_JESUS_ONLINE_MASTER')">Decisão Online</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-rede" class="modal" onclick="if(event.target == this) fecharModalRede()">
+    <div class="modal-content" style="max-width: 300px;">
+        <h3 style="margin-bottom: 20px; text-align: center;">Vincular à Rede:</h3>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <button onclick="aplicarTagRede('Start')" style="background:#FF9800; color:white; padding:12px; border-radius:10px;">Start</button>
+            <button onclick="aplicarTagRede('Diflen')" style="background:#2196F3; color:white; padding:12px; border-radius:10px;">Diflen</button>
+            <button onclick="aplicarTagRede('Familia')" style="background:#4CAF50; color:white; padding:12px; border-radius:10px;">Família</button>
+            <button onclick="aplicarTagRede('')" style="background:#eee; color:#666; padding:12px; border-radius:10px;">Remover Rede</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-confirm-envio" class="modal" onclick="if(event.target == this) fecharModalEnvio()">
+    <div class="modal-content" style="max-width: 320px; text-align: center;">
+        <h3 style="margin-bottom: 10px;">Enviar Ficha?</h3>
+        <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Marcar como enviada e abrir WhatsApp?</p>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="fecharModalEnvio()" style="flex: 1; padding: 12px; background: #eee; border-radius: 10px;">Não</button>
+            <button onclick="processarEnvio()" style="flex: 1; padding: 12px; background: var(--primary); color: white; border-radius: 10px;">Sim</button>
+        </div>
+    </div>
+</div>
+<div id="modal-progresso" class="modal">
+    <div class="modal-content" style="max-width: 300px; text-align: center;">
+        <h3 id="status-importacao">Importando dados...</h3>
+        <div style="width: 100%; background: #eee; height: 10px; border-radius: 5px; margin: 15px 0; overflow: hidden;">
+            <div id="barra-progresso" style="width: 0%; height: 100%; background: var(--primary); transition: width 0.3s;"></div>
+        </div>
+        <button id="btn-concluir-import" onclick="fecharModalProgresso()" style="display: none; width: 100%; padding: 10px; background: var(--primary); color: white; border-radius: 8px; border: none;">OK</button>
+    </div>
+</div>
+<link rel="manifest" href="manifest.json">
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js');
+  }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="sheets.js"></script>
+<script src="ui.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
