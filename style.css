@@ -20,9 +20,11 @@ header { background: white; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.0
 .card { background: white; border-radius: 16px; padding: 16px; margin: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; overflow: hidden; }
 .rede-highlight { position: absolute; top: 0; left: 0; right: 0; height: 5px; }
 .card-header { display: flex; justify-content: space-between; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; margin-bottom: 10px; }
-.name { font-size: 17px; font-weight: 700; }
+.name {text-transform: uppercase; /* Força todo o texto para MAIÚSCULO */ font-size: 17px; font-weight: 700; }
 
-.tag-rede { color: white; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
+.tag-rede { color: white; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; margin-top: 6px; /* Ajuste o valor conforme desejar mais ou menos espaço */
+    display: inline-block; /* Garante que a margem funcione corretamente */
+}
 .info-row { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #666; margin-bottom: 4px; }
 .info-row i { width: 14px; height: 14px; color: var(--secondary); }
 
@@ -212,4 +214,77 @@ header { background: white; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.0
     border-radius: 12px;
     font-size: 11px;
     font-weight: 800;
+}
+
+.detalhes-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 10px;
+    text-align: left;
+}
+
+.detalhe-item {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+}
+
+.detalhe-item label {
+    display: block;
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.detalhe-item span {
+    font-size: 15px;
+    color: #333;
+    word-break: break-word;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #888;
+}
+
+.star-btn-header {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ccc; /* Cor da estrela vazia */
+    transition: transform 0.2s;
+}
+
+.star-btn-header:active {
+    transform: scale(1.2);
+}
+
+.fav-active {
+    fill: #FFD700 !important; /* Cor amarela preenchida */
+    color: #FFD700 !important;
+}
+
+/* Garante que o container dos botões no header não quebre */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
 }
