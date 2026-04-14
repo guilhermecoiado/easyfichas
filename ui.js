@@ -101,7 +101,39 @@ function renderCards(lista) {
     `;
     cards.appendChild(card);
   });
-  
+
+  function verDetalhes(id) {
+    const f = fichas.find(x => x.ID == id);
+    if (!f) return;
+
+    const modal = document.getElementById("modal-detalhes");
+    const container = document.getElementById("detalhes-content");
+    
+    // Filtramos para não mostrar campos internos ou vazios
+    const camposIgnorar = ["ID", "REDE", "FAVORITO", "FICHA_ENVIADA", "ORIGEM"];
+    
+    let html = `<div class="detalhes-lista">`;
+    
+    for (let campo in f) {
+        if (!camposIgnorar.includes(campo) && f[campo] && f[campo] !== "") {
+            html += `
+                <div class="detalhe-item">
+                    <label>${campo}:</label>
+                    <span>${f[campo]}</span>
+                </div>
+            `;
+        }
+    }
+    
+    html += `</div>`;
+    
+    container.innerHTML = html;
+    modal.style.display = "flex";
+}
+
+function fecharModalDetalhes() {
+    document.getElementById("modal-detalhes").style.display = "none";
+}
   // Renderiza os ícones do Lucide após criar os elementos
   lucide.createIcons(); 
 }
