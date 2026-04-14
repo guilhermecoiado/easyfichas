@@ -60,12 +60,11 @@ function renderCards(lista) {
         infoLinha2 = `Melhor dia: ${melhorDia}`;
     }
 
-    // 3. Criação do elemento Card (Única declaração)
+    // 3. Criação do elemento Card
     const card = document.createElement("div");
-    // Combina as classes: card básico + classe da rede + classe da cor da origem
     card.className = `card ${f.REDE || ''} ${classeOrigem}`;
 
-    card.innerHTML = `
+card.innerHTML = `
       <div class="rede-highlight" style="background: var(--${(f.REDE || '').toLowerCase()})"></div>
       <div class="card-header">
         <div>
@@ -75,9 +74,14 @@ function renderCards(lista) {
              ${f.FICHA_ENVIADA === "Sim" ? `<span class="tag-rede" style="background: #666; font-size:9px;">ENVIADA</span>` : ''}
           </div>
         </div>
-        <button class="view-btn" onclick="verDetalhes('${f.ID}')">
-            <i data-lucide="eye"></i>
-        </button>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <button class="star-btn-header" onclick="toggleFav('${f.ID}')">
+                <i data-lucide="star" class="${f.FAVORITO === 'Sim' ? 'fav-active' : ''}"></i>
+            </button>
+            <button class="view-btn" onclick="verDetalhes('${f.ID}')">
+                <i data-lucide="eye"></i>
+            </button>
+        </div>
       </div>
 
       <div class="info-row"><i data-lucide="${icone1}"></i> <span>${infoLinha1}</span></div>
@@ -94,23 +98,28 @@ function renderCards(lista) {
         <button class="map" onclick="openMap('${endereco}')"><i data-lucide="map"></i> Mapa</button>
         <button class="share" onclick="confirmarEnvio('${f.ID}')"><i data-lucide="send"></i> Enviar</button>
         <button class="btn-rede-tag" onclick="abrirSeletorRede('${f.ID}')"><i data-lucide="tag"></i> Rede</button>
-        <button class="star" onclick="toggleFav('${f.ID}')">
-            <i data-lucide="star" class="${f.FAVORITO === 'Sim' ? 'fav-active' : ''}"></i>
-        </button>
       </div>
     `;
+
     cards.appendChild(card);
   });
 
-  function verDetalhes(id) {
+  // Renderiza os ícones do Lucide após criar os elementos
+  lucide.createIcons(); 
+}
+
+// --- FUNÇÕES GLOBAIS (FORA DO RENDER CARDS) ---
+
+function verDetalhes(id) {
+    // 'fichas' é uma variável global definida no app.js
     const f = fichas.find(x => x.ID == id);
     if (!f) return;
 
     const modal = document.getElementById("modal-detalhes");
     const container = document.getElementById("detalhes-content");
     
-    // Filtramos para não mostrar campos internos ou vazios
-    const camposIgnorar = ["ID", "REDE", "FAVORITO", "FICHA_ENVIADA", "ORIGEM"];
+// Adicionamos IP e REGISTRO à lista de ignorados
+    const camposIgnorar = ["ID", "REDE", "FAVORITO", "FICHA_ENVIADA", "ORIGEM", "IP", "REGISTRO", "Registro", "ip"];
     
     let html = `<div class="detalhes-lista">`;
     
@@ -134,6 +143,12 @@ function renderCards(lista) {
 function fecharModalDetalhes() {
     document.getElementById("modal-detalhes").style.display = "none";
 }
-  // Renderiza os ícones do Lucide após criar os elementos
-  lucide.createIcons(); 
+
+function abrirSeletorRede(id) {
+    window.fichaParaTaguear = id;
+    document.getElementById("modal-rede").style.display = "flex";
+}
+
+function fecharModalRede() {
+    document.getElementById("modal-rede").style.display = "none";
 }
