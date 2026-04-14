@@ -109,12 +109,21 @@ function processarEnvio() {
         renderCards(fichas);
         salvarNaPlanilha(f.ID, "FICHA_ENVIADA", "Sim");
         
-        const msg = `*Nova ficha*\n*Nome:* ${f.NOME || f["Nome"]}\n*Contato:* ${f.TELEFONE || f["Celular"]}`;
+        // Mapeamento dos dados solicitados
+        const nome = f["NOME"] || f["Nome"] || f["Nome e sobrenome"] || "Não informado";
+        const contato = f["TELEFONE"] || f["Celular"] || f["Fone/Wpp"] || f["Fone/WhatsApp"] || "Não informado";
+        const endereco = f["ENDERECO"] || f["Endereço"] || "Não informado";
+        
+        // Montagem da mensagem estruturada
+        const msg = `*Nova Ficha*\n\n` +
+                    `*Nome:* ${nome}\n` +
+                    `*Contato:* ${contato}\n` +
+                    `*Endereço:* ${endereco}`;
+        
         window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
     }
     fecharModalEnvio();
 }
-
 // --- FILTROS E BUSCA ---
 
 function toggleRede() {
