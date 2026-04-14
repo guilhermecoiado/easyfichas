@@ -149,6 +149,18 @@
         <button id="btn-concluir-import" onclick="fecharModalProgresso()" style="display: none; width: 100%; padding: 10px; background: var(--primary); color: white; border-radius: 8px; border: none;">OK</button>
     </div>
 </div>
+
+<div id="modal-detalhes" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Detalhes da Ficha</h3>
+            <button onclick="fecharModalDetalhes()" class="close-btn">&times;</button>
+        </div>
+        <div id="detalhes-content">
+            </div>
+        <button onclick="fecharModalDetalhes()" class="btn-primario" style="margin-top:20px; width:100%;">Fechar</button>
+    </div>
+</div>
 <link rel="manifest" href="manifest.json">
 <script>
   if ('serviceWorker' in navigator) {
