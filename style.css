@@ -1,14 +1,58 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
+
 :root {
-    --primary: #6C63FF; --secondary: #4285F4; --success: #25D366;
-    --tag-bg: #FEF7E0; --tag-text: #614C19; --bg-body: #f5f5f5;
-    --start: #FF9800; --diflen: #2196F3; --familia: #4CAF50;
+    --primary: #6C63FF; 
+    --secondary: #4285F4; 
+    --success: #25D366;
+    --tag-bg: #FEF7E0; 
+    --tag-text: #614C19; 
+    --bg-body: #f5f5f5;
+    
+    /* Variáveis de Cores das Redes */
+    --analia-heston: #2e7d32;   
+    --analia-marcone: #4caf50;  
+    --analia-matias: #8bc34a;   
+    --eldorado-elielson: #2196f3; 
+    --guarulhos-gilvane: #ff9800; 
+    --sao-caetano-aaron: #f44336; 
 }
+
+/* 1. Cores das Tags e Indicador do Topo (Fundo Sólido) */
+/* Adicionamos .tag-rede e #rede-indicator para garantir que pinte apenas onde deve */
+.tag-rede.analia-heston, #rede-indicator.analia-heston { background-color: var(--analia-heston) !important; color: white; }
+.tag-rede.analia-marcone, #rede-indicator.analia-marcone { background-color: var(--analia-marcone) !important; color: white; }
+.tag-rede.analia-matias, #rede-indicator.analia-matias { background-color: var(--analia-matias) !important; color: white; }
+.tag-rede.eldorado-elielson, #rede-indicator.eldorado-elielson { background-color: var(--eldorado-elielson) !important; color: white; }
+.tag-rede.guarulhos-gilvane, #rede-indicator.guarulhos-gilvane { background-color: var(--guarulhos-gilvane) !important; color: white; }
+.tag-rede.sao-caetano-aaron, #rede-indicator.sao-caetano-aaron { background-color: var(--sao-caetano-aaron) !important; color: white; }
+
+/* 2. Ajuste Sutil dos CARDS: Fundo Branco + Borda Lateral Grossa */
+.card { 
+    background: white !important; /* Força o fundo branco sempre */
+    border-radius: 16px; 
+    padding: 16px; 
+    margin: 15px; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+    position: relative; 
+    overflow: hidden; 
+    transition: all 0.3s ease; 
+    border-left: 8px solid transparent; 
+}
+
+/* Aplicamos apenas a cor da borda, sem mexer no fundo do card */
+.card.analia-heston { border-left-color: var(--analia-heston) !important; }
+.card.analia-marcone { border-left-color: var(--analia-marcone) !important; }
+.card.analia-matias { border-left-color: var(--analia-matias) !important; }
+.card.eldorado-elielson { border-left-color: var(--eldorado-elielson) !important; }
+.card.guarulhos-gilvane { border-left-color: var(--guarulhos-gilvane) !important; }
+.card.sao-caetano-aaron { border-left-color: var(--sao-caetano-aaron) !important; }
+
 body { font-family: system-ui, sans-serif; background: var(--bg-body); padding-bottom: 110px; overflow-x: hidden; }
 header { background: white; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
 .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .brand { display: flex; align-items: center; gap: 8px; }
 .title { font-size: 20px; font-weight: 800; }
+
 #rede-indicator { font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 10px; color: white; display: none; text-transform: uppercase; }
 
 .fav-btn-top { background: #FFF9E6; border: none; color: #FFD600; padding: 8px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; }
@@ -17,14 +61,12 @@ header { background: white; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.0
 
 #search { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ddd; background: #f9f9f9; outline: none; }
 
-.card { background: white; border-radius: 16px; padding: 16px; margin: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; overflow: hidden; }
-.rede-highlight { position: absolute; top: 0; left: 0; right: 0; height: 5px; }
-.card-header { display: flex; justify-content: space-between; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; margin-bottom: 10px; }
-.name {text-transform: uppercase; /* Força todo o texto para MAIÚSCULO */ font-size: 17px; font-weight: 700; }
+.rede-highlight { position: absolute; top: 0; left: 0; right: 0; height: 5px; z-index: 1; }
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 8px; margin-bottom: 10px; }
+.name { text-transform: uppercase; font-size: 17px; font-weight: 700; color: #333; }
 
-.tag-rede { color: white; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; margin-top: 6px; /* Ajuste o valor conforme desejar mais ou menos espaço */
-    display: inline-block; /* Garante que a margem funcione corretamente */
-}
+.tag-rede { color: white; font-size: 9px; font-weight: 800; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; margin-top: 6px; display: inline-block; }
+
 .info-row { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #666; margin-bottom: 4px; }
 .info-row i { width: 14px; height: 14px; color: var(--secondary); }
 
@@ -37,46 +79,9 @@ header { background: white; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.0
 .map { background: var(--secondary); color: white; }
 .share { background: var(--primary); color: white; }
 
-
-/* Botão de Favoritos no Topo */
-.fav-btn-top {
-    background: #FFF9E6;
-    border: none;
-    color: #FFD600;
-    padding: 8px;
-    border-radius: 10px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-}
-.fav-btn-top i {
-    width: 20px;
-    height: 20px;
-    fill: #FFD600; /* Estrela do topo sempre preenchida */
-}
-
-/* Botão de Estrela no Card */
-.star {
-    background: #f8f9fa !important;
-    min-width: 45px !important;
-    max-width: 45px !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.star i {
-    width: 18px !important;
-    height: 18px !important;
-    color: #ccc; /* Cor da borda quando inativo */
-    transition: all 0.2s ease;
-}
-
-/* A CLASSE QUE FAZ A MÁGICA VISUAL */
-.fav-active {
-    fill: #FFD600 !important; /* Preenche o fundo da estrela */
-    color: #FFD600 !important; /* Muda a cor da borda da estrela */
-}
+.star-btn-header { background: none; border: none; cursor: pointer; padding: 5px; display: flex; align-items: center; justify-content: center; color: #ccc; transition: transform 0.2s; }
+.star-btn-header:active { transform: scale(1.2); }
+.fav-active { fill: #FFD700 !important; color: #FFD700 !important; }
 
 .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: white; display: flex; justify-content: space-around; padding: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 25px; z-index: 2000; }
 .nav-item { border: none; background: none; display: flex; flex-direction: column; align-items: center; color: #888; flex: 1; gap: 2px; }
@@ -87,204 +92,94 @@ header { background: white; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.0
 .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 3000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
 .modal-content { background: white; width: 100%; max-width: 400px; border-radius: 20px; padding: 20px; max-height: 80vh; overflow-y: auto; }
 .filter-input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 8px; }
-.btn-import-opt { background: #f8f9fa; border: 1px solid #ddd; padding: 12px; border-radius: 10px; font-weight: 700; text-align: center; }
-/* Botão de Expansão (Olhinho) sem fundo e sem borda */
-.view-btn {
-    background: none !important; /* Remove o fundo lilás/cinza */
-    border: none !important;     /* Remove qualquer borda */
-    padding: 0;                  /* Remove o espaçamento interno */
-    cursor: pointer;
-    color: var(--primary);       /* Mantém a cor do ícone */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    outline: none;               /* Remove o destaque ao clicar */
-}
+.btn-import-opt { background: #f8f9fa; border: 1px solid #ddd; padding: 12px; border-radius: 10px; font-weight: 700; text-align: center; width: 100%; margin-bottom: 5px; cursor: pointer;}
 
-.view-btn i {
-    width: 24px;                 /* Ajuste o tamanho do ícone se necessário */
-    height: 24px;
-}
-.view-btn:hover {
-    opacity: 0.7;
-    transform: scale(1.1);
-    transition: 0.2s;
-}
+.view-btn { background: none !important; border: none !important; padding: 0; cursor: pointer; color: var(--primary); display: flex; align-items: center; justify-content: center; outline: none; }
+.view-btn i { width: 24px; height: 24px; }
+.view-btn:hover { opacity: 0.7; transform: scale(1.1); transition: 0.2s; }
 
-/* Overlay que cobre a tela toda */
 .loader-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.9); /* Fundo quase opaco */
+    background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(5px);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 99999; /* Valor altíssimo para ficar na frente de tudo */
-    transition: opacity 0.4s ease, visibility 0.4s;
+    z-index: 99999;
+    /* Isso garante que ele desapareça suavemente em vez de sumir de vez */
+    transition: opacity 0.5s ease, visibility 0.5s; 
 }
 
-/* Quando escondido */
 .loader-hidden {
     opacity: 0;
     visibility: hidden;
 }
-
-.loader-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
+/* Estilização da animação da ficha */
+.paper-animation {
+    font-size: 48px;
     color: var(--primary);
-    font-weight: bold;
-}
-
-.spin-icon {
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-/* Cores sutis por tipo de planilha */
-.card-life-groups {
-    background-color: #ffffff !important; /* Branco padrão */
-}
-
-.card-novo-nascimento {
-    background-color: #f0f7ff !important; /* Azul bem claro */
-    border-left: 4px solid #2196F3;
-}
-
-.card-decisao-online {
-    background-color: #fff9f0 !important; /* Laranja/Bege bem claro */
-    border-left: 4px solid #FF9800;
-}
-
-/* Ajuste para que o destaque da rede não suma */
-.rede-highlight {
-    z-index: 1;
-}
-.summary-shortcuts {
+    margin-bottom: 15px;
+    animation: floatPaper 2s ease-in-out infinite;
     display: flex;
-    gap: 12px;
-    padding: 10px 16px;
-    max-width: 500px;
-    margin: 0 auto;
-}
-
-.shortcut-card {
-    flex: 1;
-    display: flex;
+    justify-content: center;
     align-items: center;
-    justify-content: space-between;
-    padding: 12px 14px;
-    border-radius: 12px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    transition: transform 0.2s, box-shadow 0.2s;
-    border: 1px solid rgba(0,0,0,0.05);
 }
 
-.shortcut-card:active { transform: scale(0.96); }
+.paper-animation i {
+    width: 60px;
+    height: 60px;
+}
 
-/* Cores baseadas na sua imagem */
+/* Animação de flutuar e brilhar */
+@keyframes floatPaper {
+    0% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.6;
+    }
+    50% {
+        transform: translateY(-20px) rotate(5deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.6;
+    }
+}
+
+/* Ajuste no texto de carregamento */
+.loader-content span {
+    font-weight: 600;
+    color: var(--primary);
+    letter-spacing: 1px;
+    animation: pulseText 1.5s infinite;
+}
+
+@keyframes pulseText {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* Planilhas Base (Sutileza mantida caso não haja rede) */
+.card-novo-nascimento { border-left: 4px solid #2196F3; }
+.card-decisao-online { border-left: 4px solid #FF9800; }
+
+.summary-shortcuts { display: flex; gap: 12px; padding: 10px 16px; max-width: 500px; margin: 0 auto; }
+.shortcut-card { flex: 1; display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; border: 1px solid rgba(0,0,0,0.05); }
 .lifegroups { background-color: #E8EBF7; color: #3F51B5; }
 .decisao { background-color: #F3E5F5; color: #7B1FA2; }
-
-.shortcut-content {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.shortcut-content i { width: 18px; height: 18px; }
+.shortcut-content { display: flex; align-items: center; gap: 8px; }
 .shortcut-content span { font-weight: 700; font-size: 13px; }
+.badge { background: rgba(0, 0, 0, 0.2); color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 800; }
 
-.badge {
-    background: rgba(0, 0, 0, 0.2);
-    color: white;
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 800;
-}
-
-.detalhes-lista {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    max-height: 60vh;
-    overflow-y: auto;
-    padding-right: 10px;
-    text-align: left;
-}
-
-.detalhe-item {
-    border-bottom: 1px solid #eee;
-    padding-bottom: 8px;
-}
-
-.detalhe-item label {
-    display: block;
-    font-size: 11px;
-    color: #888;
-    text-transform: uppercase;
-    font-weight: bold;
-}
-
-.detalhe-item span {
-    font-size: 15px;
-    color: #333;
-    word-break: break-word;
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.close-btn {
-    background: none;
-    border: none;
-    font-size: 28px;
-    cursor: pointer;
-    color: #888;
-}
-
-.star-btn-header {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ccc; /* Cor da estrela vazia */
-    transition: transform 0.2s;
-}
-
-.star-btn-header:active {
-    transform: scale(1.2);
-}
-
-.fav-active {
-    fill: #FFD700 !important; /* Cor amarela preenchida */
-    color: #FFD700 !important;
-}
-
-/* Garante que o container dos botões no header não quebre */
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 12px;
-}
+.detalhes-lista { display: flex; flex-direction: column; gap: 12px; max-height: 60vh; overflow-y: auto; text-align: left; }
+.detalhe-item { border-bottom: 1px solid #eee; padding-bottom: 8px; }
+.detalhe-item label { display: block; font-size: 11px; color: #888; text-transform: uppercase; font-weight: bold; }
+.detalhe-item span { font-size: 15px; color: #333; word-break: break-word; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.close-btn { background: none; border: none; font-size: 28px; cursor: pointer; color: #888; }
