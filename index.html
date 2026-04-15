@@ -8,7 +8,29 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-
+<div id="login-container" class="loader-overlay" style="z-index: 100000; background: #f5f5f5; flex-direction: column;">
+    <div class="modal-content" style="max-width: 320px; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+        <div class="brand" style="justify-content: center; margin-bottom: 25px;">
+            <i data-lucide="file-text" style="color: var(--primary); width: 32px; height: 32px;"></i>
+            <div class="title" style="font-size: 24px;">easyfichas</div>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            <div style="text-align: left;">
+                <label style="font-size: 12px; font-weight: bold; color: #666; margin-left: 5px;">Usuário:</label>
+                <input type="text" id="login-user" class="filter-input" style="margin-bottom: 0;" placeholder="Seu usuário">
+            </div>
+            <div style="text-align: left;">
+                <label style="font-size: 12px; font-weight: bold; color: #666; margin-left: 5px;">Senha:</label>
+                <input type="password" id="login-pass" class="filter-input" style="margin-bottom: 0;" placeholder="Sua senha">
+            </div>
+            
+            <p id="login-error" style="color: #f44336; font-size: 12px; font-weight: bold; min-height: 18px; text-align: center; margin: 0;"></p>
+            
+            <button onclick="validarLogin()" style="background: var(--primary); color: white; padding: 14px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; width: 100%;">Acessar</button>
+        </div>
+    </div>
+</div>
 <div id="loader-container" class="loader-overlay">
     <div class="loader-content">
         <div class="paper-animation">
