@@ -2,12 +2,26 @@ function renderCards(lista) {
   const cards = document.getElementById("cards");
   cards.innerHTML = "";
 
-  // Mensagem para banco vazio
+  // Referências para decidir a mensagem vazia
+  const redeAtiva = document.getElementById("rede-indicator").style.display === "block";
+  const tituloPagina = document.getElementById("title").innerText;
+
+  // Mensagem para banco vazio ou filtros específicos
   if (!lista || lista.length === 0) {
+    let mensagem = "Banco de fichas vazio."; // Mensagem padrão
+
+    if (redeAtiva) {
+      mensagem = "Sem fichas para essa rede.";
+    } else if (tituloPagina === "Enviadas") {
+      mensagem = "Sem fichas enviadas.";
+    } else if (tituloPagina === "Favoritos") {
+      mensagem = "Sem fichas favoritadas.";
+    }
+
     cards.innerHTML = `
       <div style="text-align: center; padding: 50px 20px; color: #888;">
         <i data-lucide="database-zap" style="width: 48px; height: 48px; margin-bottom: 10px; opacity: 0.5;"></i>
-        <p style="font-size: 16px; font-weight: bold;">Banco de fichas vazio.</p>
+        <p style="font-size: 16px; font-weight: bold;">${mensagem}</p>
       </div>
     `;
     lucide.createIcons();
@@ -76,28 +90,27 @@ function renderCards(lista) {
 
     // 3. Criação do elemento Card
     const card = document.createElement("div");
-    // Adicionamos classeRede aqui para o fundo e borda do card mudarem
     card.className = `card ${classeRede} ${classeOrigem}`;
 
     card.innerHTML = `
-      <div class="rede-highlight" style="background: var(--${classeRede})"></div>
-      <div class="card-header">
-        <div>
-          <div class="name">${nome}</div>
-          <div style="display:flex; gap:5px; align-items:center; flex-wrap: wrap;">
-            ${f.REDE ? `<span class="tag-rede ${classeRede}">${f.REDE}</span>` : ''}
-            ${f.FICHA_ENVIADA === "Sim" ? `<span class="tag-rede" style="background: #666; font-size:9px;">ENVIADA</span>` : ''}
-          </div>
-        </div>
-        <div style="display: flex; gap: 8px; align-items: center;">
-            <button class="star-btn-header" onclick="toggleFav('${f.ID}')">
-                <i data-lucide="star" class="${f.FAVORITO === 'Sim' ? 'fav-active' : ''}"></i>
-            </button>
-            <button class="view-btn" onclick="verDetalhes('${f.ID}')">
-                <i data-lucide="eye"></i>
-            </button>
-        </div>
+  <div class="rede-highlight" style="background: var(--${classeRede})"></div>
+  <div class="card-header">
+    <div style="flex: 1;">
+      <div class="name">${nome}</div>
+      <div style="display:flex; flex-direction: column; gap: 4px; align-items: flex-start; margin-top: 6px;">
+        ${f.FICHA_ENVIADA === "Sim" ? `<span class="tag-rede" style="background: #666; font-size:9px;">ENVIADA</span>` : ''}
+        ${f.REDE ? `<span class="tag-rede ${classeRede}">${f.REDE}</span>` : ''}
       </div>
+    </div>
+    <div style="display: flex; gap: 8px; align-items: center;">
+        <button class="star-btn-header" onclick="toggleFav('${f.ID}')">
+            <i data-lucide="star" class="${f.FAVORITO === 'Sim' ? 'fav-active' : ''}"></i>
+        </button>
+        <button class="view-btn" onclick="verDetalhes('${f.ID}')">
+            <i data-lucide="eye"></i>
+        </button>
+    </div>
+  </div>
 
       <div class="info-row"><i data-lucide="${icone1}"></i> <span>${infoLinha1}</span></div>
       <div class="info-row"><i data-lucide="${icone2}"></i> <span>${infoLinha2}</span></div>
