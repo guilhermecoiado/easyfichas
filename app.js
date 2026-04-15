@@ -219,13 +219,18 @@ function fecharModalRestaurar() {
 }
 
 async function processarRestauracao() {
+    // 1. Fecha o modal imediatamente para dar feedback visual instantâneo
+    fecharModalRestaurar();
+
     const f = fichas.find(x => x.ID == fichaPendenteRestaurar);
     if(f) {
+        // 2. Atualiza a interface local na hora
         f.FICHA_ENVIADA = "Não"; 
         renderCards(fichas); 
-        await salvarNaPlanilha(f.ID, "FICHA_ENVIADA", "Não");
+        
+        // 3. Deixa a atualização da planilha rodando em segundo plano
+        salvarNaPlanilha(f.ID, "FICHA_ENVIADA", "Não");
     }
-    fecharModalRestaurar();
 }
 
 // --- FILTROS E BUSCA ---
