@@ -3,7 +3,38 @@ let fichas = [];
 let filtroRede = null;
 let fichaPendenteEnvio = null;
 let fichaPendenteRestaurar = null; // Variável global para controle
+let tentativasLogin = 0;
 
+function validarLogin() {
+    const user = document.getElementById("login-user").value;
+    const pass = document.getElementById("login-pass").value;
+    const errorMsg = document.getElementById("login-error");
+
+    if (user === "gestaofichas" && pass === "pazfichas2026") {
+        document.getElementById("login-container").style.display = "none";
+        // Inicia o app somente após o login com sucesso
+        init(); 
+    } else {
+        tentativasLogin++;
+        if (tentativasLogin >= 3) {
+            errorMsg.innerText = "Entre em contato com o administrador e solicite novamente os dados de acesso.";
+            // Desabilita o botão para impedir novas tentativas
+            event.target.disabled = true;
+            event.target.style.background = "#ccc";
+        } else {
+            errorMsg.innerText = "Dados incorretos, tente novamente.";
+        }
+    }
+}
+
+// AJUSTE: Remova a chamada automática de init() no final do arquivo app.js
+// Em vez de deixar apenas "init();", deixe o login chamar o init.
+// Se você quiser que o Enter funcione no teclado:
+document.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter' && document.getElementById("login-container").style.display !== "none") {
+        validarLogin();
+    }
+});
 // Função auxiliar para padronizar classes de rede (Slug)
 const criarSlug = (texto) => {
     if (!texto) return "";
@@ -400,4 +431,3 @@ function filtrarPorPlanilhaRapido(tipo) {
     aplicarFiltros();
 }
 
-init();
