@@ -15,6 +15,20 @@ function renderCards(lista) {
   }
 
   lista.forEach(f => {
+    // Função auxiliar para criar a classe da rede (slug) - Sincronizada com app.js e CSS
+    const criarClasseRede = (texto) => {
+        if (!texto) return "";
+        return texto.toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "") // Remove acentos
+            .replace(/\s+/g, '-')           // Espaço vira hífen
+            .replace(/[^a-z0-9-]/g, '')    // Remove símbolos
+            .replace(/-+/g, '-')           // Evita hífens duplos
+            .replace(/^-+|-+$/g, '');      // Remove hífens nas pontas
+    };
+
+    const classeRede = criarClasseRede(f.REDE);
+
     // Mapeamento de campos básicos
     const nome = f["NOME"] || f["Nome"] || f["Nome e sobrenome"] || "Sem Nome";
     const telefone = f["TELEFONE"] || f["Celular"] || f["Fone/Wpp"] || f["Fone/WhatsApp"] || "";
@@ -62,16 +76,17 @@ function renderCards(lista) {
 
     // 3. Criação do elemento Card
     const card = document.createElement("div");
-    card.className = `card ${f.REDE || ''} ${classeOrigem}`;
+    // Adicionamos classeRede aqui para o fundo e borda do card mudarem
+    card.className = `card ${classeRede} ${classeOrigem}`;
 
-card.innerHTML = `
-      <div class="rede-highlight" style="background: var(--${(f.REDE || '').toLowerCase()})"></div>
+    card.innerHTML = `
+      <div class="rede-highlight" style="background: var(--${classeRede})"></div>
       <div class="card-header">
         <div>
           <div class="name">${nome}</div>
           <div style="display:flex; gap:5px; align-items:center; flex-wrap: wrap;">
-             ${f.REDE ? `<span class="tag-rede" style="background: var(--${f.REDE.toLowerCase()})">${f.REDE}</span>` : ''}
-             ${f.FICHA_ENVIADA === "Sim" ? `<span class="tag-rede" style="background: #666; font-size:9px;">ENVIADA</span>` : ''}
+            ${f.REDE ? `<span class="tag-rede ${classeRede}">${f.REDE}</span>` : ''}
+            ${f.FICHA_ENVIADA === "Sim" ? `<span class="tag-rede" style="background: #666; font-size:9px;">ENVIADA</span>` : ''}
           </div>
         </div>
         <div style="display: flex; gap: 8px; align-items: center;">
@@ -94,9 +109,12 @@ card.innerHTML = `
       </div>
 
       <div class="actions">
-        <button class="whatsapp" onclick="openWhats('${telefone}')"><i data-lucide="message-circle"></i> Whats</button>
-        <button class="map" onclick="openMap('${endereco}')"><i data-lucide="map"></i> Mapa</button>
-        <button class="share" onclick="confirmarEnvio('${f.ID}')"><i data-lucide="send"></i> Enviar</button>
+        ${f.FICHA_ENVIADA === "Sim" ? 
+          `<button onclick="confirmarRestaurar('${f.ID}')" style="background: #f0f0f0; color: #666; flex: 1;"><i data-lucide="rotate-ccw"></i> Restaurar</button>` : 
+          `<button class="whatsapp" onclick="openWhats('${telefone}')"><i data-lucide="message-circle"></i> Whats</button>
+           <button class="map" onclick="openMap('${endereco}')"><i data-lucide="map"></i> Mapa</button>
+           <button class="share" onclick="confirmarEnvio('${f.ID}')"><i data-lucide="send"></i> Enviar</button>`
+        }
         <button class="btn-rede-tag" onclick="abrirSeletorRede('${f.ID}')"><i data-lucide="tag"></i> Rede</button>
       </div>
     `;
@@ -104,21 +122,18 @@ card.innerHTML = `
     cards.appendChild(card);
   });
 
-  // Renderiza os ícones do Lucide após criar os elementos
   lucide.createIcons(); 
 }
 
 // --- FUNÇÕES GLOBAIS (FORA DO RENDER CARDS) ---
 
 function verDetalhes(id) {
-    // 'fichas' é uma variável global definida no app.js
     const f = fichas.find(x => x.ID == id);
     if (!f) return;
 
     const modal = document.getElementById("modal-detalhes");
     const container = document.getElementById("detalhes-content");
     
-// Adicionamos IP e REGISTRO à lista de ignorados
     const camposIgnorar = ["ID", "REDE", "FAVORITO", "FICHA_ENVIADA", "ORIGEM", "IP", "REGISTRO", "Registro", "ip"];
     
     let html = `<div class="detalhes-lista">`;
