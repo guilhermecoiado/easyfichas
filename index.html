@@ -5,15 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>easyfichas</title>
     <link rel="stylesheet" href="style.css">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="EasyFichas">
-
-<link rel="apple-touch-icon" href="icon-192.png">
-
-<link rel="manifest" href="manifest.json">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
+
+<div id="loader-container" class="loader-overlay">
+    <div class="loader-content">
+        <div class="paper-animation">
+            <i data-lucide="file-text"></i>
+        </div>
+        <span>Carregando fichas...</span>
+    </div>
+</div>
+<script>lucide.createIcons();</script>
 
 <header>
     <div class="header-top">
@@ -34,12 +38,7 @@
     </div>
     <input id="search" placeholder="Buscar nome ou bairro">
 </header>
-<div id="loader-container" class="loader-overlay">
-    <div class="loader-content">
-        <i data-lucide="loader-2" class="spin-icon"></i>
-        <span>Carregando fichas...</span>
-    </div>
-</div>
+
 <div class="summary-shortcuts">
     <div class="shortcut-card lifegroups" onclick="filtrarPorPlanilhaRapido('lifegroups')">
         <div class="shortcut-content">
@@ -102,10 +101,10 @@
             <select id="filter-dia" class="filter-input"><option value="">Melhor dia (Todos)</option></select>
             <select id="filter-pastor" class="filter-input"><option value="">Pastor (Todos)</option></select>
             <select id="filter-planilha" class="filter-input">
-    <option value="">Planilha (Todas)</option>
-    <option value="lifegroups">Lifegroups</option>
-    <option value="decisao">Decisão por Jesus</option>
-</select>
+                <option value="">Planilha (Todas)</option>
+                <option value="lifegroups">Lifegroups</option>
+                <option value="decisao">Decisão por Jesus</option>
+            </select>
             <div style="display:flex; gap:10px; margin-top:10px;">
                 <button onclick="limparFiltros()" style="flex:1; background:#eee; padding:12px; border-radius:10px;">Limpar</button>
                 <button onclick="aplicarFiltros()" style="flex:2; background:var(--primary); color:white; padding:12px; border-radius:10px;">Aplicar</button>
@@ -126,12 +125,16 @@
 </div>
 
 <div id="modal-rede" class="modal" onclick="if(event.target == this) fecharModalRede()">
-    <div class="modal-content" style="max-width: 300px;">
+    <div class="modal-content" style="max-width: 350px;">
         <h3 style="margin-bottom: 20px; text-align: center;">Vincular à Rede:</h3>
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-            <button onclick="aplicarTagRede('Start')" style="background:#FF9800; color:white; padding:12px; border-radius:10px;">Start</button>
-            <button onclick="aplicarTagRede('Diflen')" style="background:#2196F3; color:white; padding:12px; border-radius:10px;">Diflen</button>
-            <button onclick="aplicarTagRede('Familia')" style="background:#4CAF50; color:white; padding:12px; border-radius:10px;">Família</button>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <button onclick="aplicarTagRede('Anália - Heston')" style="background:var(--analia-heston); color:white; padding:12px; border-radius:10px;">Anália - Heston</button>
+            <button onclick="aplicarTagRede('Anália - Marcone')" style="background:var(--analia-marcone); color:white; padding:12px; border-radius:10px;">Anália - Marcone</button>
+            <button onclick="aplicarTagRede('Anália - Matias')" style="background:var(--analia-matias); color:white; padding:12px; border-radius:10px;">Anália - Matias</button>
+            <button onclick="aplicarTagRede('Eldorado - Elielson')" style="background:var(--eldorado-elielson); color:white; padding:12px; border-radius:10px;">Eldorado - Elielson</button>
+            <button onclick="aplicarTagRede('Guarulhos - Gilvane')" style="background:var(--guarulhos-gilvane); color:white; padding:12px; border-radius:10px;">Guarulhos - Gilvane</button>
+            <button onclick="aplicarTagRede('São Caetano - Aaron')" style="background:var(--sao-caetano-aaron); color:white; padding:12px; border-radius:10px;">São Caetano - Aaron</button>
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
             <button onclick="aplicarTagRede('')" style="background:#eee; color:#666; padding:12px; border-radius:10px;">Remover Rede</button>
         </div>
     </div>
@@ -147,6 +150,18 @@
         </div>
     </div>
 </div>
+
+<div id="modal-confirm-restaurar" class="modal">
+    <div class="modal-content" style="text-align: center;">
+        <h3 style="margin-bottom: 15px;">Restaurar Ficha?</h3>
+        <p style="margin-bottom: 20px; color: #666;">Tem certeza que deseja reivindicar o envio dessa ficha? Ela voltará para a lista principal.</p>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="processarRestauracao()" style="flex: 1; padding: 12px; border-radius: 10px; border: none; background: var(--primary); color: white; font-weight: bold; cursor: pointer;">Sim, Restaurar</button>
+            <button onclick="fecharModalRestaurar()" style="flex: 1; padding: 12px; border-radius: 10px; border: none; background: #eee; color: #333; font-weight: bold; cursor: pointer;">Não</button>
+        </div>
+    </div>
+</div>
+
 <div id="modal-progresso" class="modal">
     <div class="modal-content" style="max-width: 300px; text-align: center;">
         <h3 id="status-importacao">Importando dados...</h3>
@@ -163,11 +178,11 @@
             <h3>Detalhes da Ficha</h3>
             <button onclick="fecharModalDetalhes()" class="close-btn">&times;</button>
         </div>
-        <div id="detalhes-content">
-            </div>
+        <div id="detalhes-content"></div>
         <button onclick="fecharModalDetalhes()" class="btn-primario" style="margin-top:20px; width:100%;">Fechar</button>
     </div>
 </div>
+
 <link rel="manifest" href="manifest.json">
 <script>
   if ('serviceWorker' in navigator) {
@@ -175,7 +190,6 @@
   }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-<script src="https://unpkg.com/lucide@latest"></script>
 <script src="sheets.js"></script>
 <script src="ui.js"></script>
 <script src="app.js"></script>
