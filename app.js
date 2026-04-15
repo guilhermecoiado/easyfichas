@@ -5,27 +5,44 @@ let fichaPendenteEnvio = null;
 let fichaPendenteRestaurar = null; // Variável global para controle
 let tentativasLogin = 0;
 
+// Função para verificar se já existe login salvo ao abrir o app
+function verificarLoginSalvo() {
+    const salvoUser = localStorage.getItem("easyfichas_user");
+    const salvaPass = localStorage.getItem("easyfichas_pass");
+
+    if (salvoUser === "gestaofichas" && salvaPass === "pazfichas2026") {
+        document.getElementById("login-container").style.display = "none";
+        init(); // Pula o login e inicia o app
+    }
+}
+
 function validarLogin() {
     const user = document.getElementById("login-user").value;
     const pass = document.getElementById("login-pass").value;
     const errorMsg = document.getElementById("login-error");
+    const btnAcessar = document.querySelector("#login-container button");
 
     if (user === "gestaofichas" && pass === "pazfichas2026") {
+        // SALVA OS DADOS NO NAVEGADOR
+        localStorage.setItem("easyfichas_user", user);
+        localStorage.setItem("easyfichas_pass", pass);
+
         document.getElementById("login-container").style.display = "none";
-        // Inicia o app somente após o login com sucesso
         init(); 
     } else {
         tentativasLogin++;
         if (tentativasLogin >= 3) {
             errorMsg.innerText = "Entre em contato com o administrador e solicite novamente os dados de acesso.";
-            // Desabilita o botão para impedir novas tentativas
-            event.target.disabled = true;
-            event.target.style.background = "#ccc";
+            btnAcessar.disabled = true;
+            btnAcessar.style.background = "#ccc";
         } else {
             errorMsg.innerText = "Dados incorretos, tente novamente.";
         }
     }
 }
+
+// Chame a verificação assim que o script carregar
+verificarLoginSalvo();
 
 // AJUSTE: Remova a chamada automática de init() no final do arquivo app.js
 // Em vez de deixar apenas "init();", deixe o login chamar o init.
