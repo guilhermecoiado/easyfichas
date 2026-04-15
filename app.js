@@ -2,6 +2,19 @@ const API = "https://script.google.com/macros/s/AKfycbyge5Ik_wxlRAGW2JdwUnFTG4X3
 let fichas = [];
 let filtroRede = null;
 let fichaPendenteEnvio = null;
+let fichaPendenteRestaurar = null; // Variável global para controle
+
+// Função auxiliar para padronizar classes de rede (Slug)
+const criarSlug = (texto) => {
+    if (!texto) return "";
+    return texto.toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "") // Remove acentos
+        .replace(/\s+/g, '-')           // Espaço vira hífen
+        .replace(/[^a-z0-9-]/g, '')    // Remove símbolos
+        .replace(/-+/g, '-')           // Evita hífens duplos (---)
+        .replace(/^-+|-+$/g, '');      // Remove hífens no início ou fim
+};
 
 // --- FUNÇÕES DE PERSISTÊNCIA ---
 
@@ -48,7 +61,7 @@ async function init() {
     setTimeout(() => {
         if(loader) loader.classList.add("loader-hidden");
         lucide.createIcons();
-    }, 300);
+    }, 1500);
 }
 
 // --- NAVEGAÇÃO E TELAS ---
@@ -104,39 +117,98 @@ function fecharModalEnvio() {
 
 function processarEnvio() {
     const f = fichas.find(x => x.ID == fichaPendenteEnvio);
-    if(f) {
-        f.FICHA_ENVIADA = "Sim";
-        renderCards(fichas);
-        salvarNaPlanilha(f.ID, "FICHA_ENVIADA", "Sim");
-        
-        // Mapeamento dos dados solicitados
-        const nome = f["NOME"] || f["Nome"] || f["Nome e sobrenome"] || "Não informado";
-        const contato = f["TELEFONE"] || f["Celular"] || f["Fone/Wpp"] || f["Fone/WhatsApp"] || "Não informado";
-        const endereco = f["ENDERECO"] || f["Endereço"] || "Não informado";
-        
-        // Montagem da mensagem estruturada
-        const msg = `*Nova Ficha*\n\n` +
-                    `*Nome:* ${nome}\n` +
-                    `*Contato:* ${contato}\n` +
-                    `*Endereço:* ${endereco}`;
-        
-        window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
+    if (!f) {
+        fecharModalEnvio();
+        return;
     }
+
+    let msg = "";
+    const nome = (f["NOME"] || f["Nome"] || f["Nome e sobrenome"] || "Não informado").toUpperCase();
+    const fone = f["TELEFONE"] || f["Celular"] || f["Fone/Wpp"] || f["Fone/WhatsApp"] || "";
+
+    if (f.ORIGEM === "LIFE_GROUPS_MASTER") {
+        msg = `*Ficha Lifegroup*\n\n`;
+        msg += `*Nome:* ${nome}\n`;
+        if (f["idade"] || f["Idade"]) msg += `*Idade:* ${f["idade"] || f["Idade"]}\n`;
+        if (f["ESTADO_CIVIL"] || f["Estado Civil"]) msg += `*Estado Civil:* ${f["ESTADO_CIVIL"] || f["Estado Civil"]}\n`;
+        const endereco = f["ENDERECO"] || f["Endereço"] || "";
+        const bairro = f["BAIRRO"] || f["Bairro"] || "";
+        if (endereco || bairro) msg += `*Endereço/Bairro:* ${endereco}${endereco && bairro ? ' - ' : ''}${bairro}\n`;
+        if (f["MELHOR_DIA"] || f["Melhor dia?"]) msg += `*Melhor dia:* ${f["MELHOR_DIA"] || f["Melhor dia?"]}\n`;
+        const instagram = f["Instagram"] || f["User Instagram"] || "";
+        msg += `*Contato/Instagram:* ${fone}${fone && instagram ? ' / ' : ''}${instagram}\n`;
+    } else {
+        msg = `*Ficha Decisão Por Jesus/Novo Nascimento*\n\n`;
+        msg += `*Nome:* ${nome}\n`;
+        if (f["Idade"] || f["idade"]) msg += `*Idade:* ${f["Idade"] || f["idade"]}\n`;
+        if (f["ESTADO_CIVIL"] || f["Estado Civil"]) msg += `*Est. Civil:* ${f["ESTADO_CIVIL"] || f["Estado Civil"]}\n`;
+        msg += `*Contato/Fone/Wpp:* ${fone}\n`;
+        const endereco = f["ENDERECO"] || f["Endereço"] || "";
+        const bairro = f["BAIRRO"] || f["Bairro"] || "";
+        if (endereco || bairro) msg += `*Endereço/Bairro:* ${endereco}${endereco && bairro ? ' - ' : ''}${bairro}\n`;
+        const noLife = f["Já num Life?"] || f["Já está em um Life Group?"] || f["Já em um Life?"];
+        if (noLife) msg += `*Já Num Life?:* ${noLife}\n`;
+        if (f["Sobre sua decisão"]) msg += `\n*Sobre sua decisão:* ${f["Sobre sua decisão"]}\n`;
+    }
+
+    f.FICHA_ENVIADA = "Sim";
+    renderCards(fichas);
+    salvarNaPlanilha(f.ID, "FICHA_ENVIADA", "Sim");
+    
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
     fecharModalEnvio();
 }
+
+// --- FUNÇÕES DE RESTAURAÇÃO ---
+
+function confirmarRestaurar(id) { 
+    fichaPendenteRestaurar = id; 
+    document.getElementById("modal-confirm-restaurar").style.display = "flex"; 
+}
+
+function fecharModalRestaurar() { 
+    document.getElementById("modal-confirm-restaurar").style.display = "none"; 
+}
+
+async function processarRestauracao() {
+    const f = fichas.find(x => x.ID == fichaPendenteRestaurar);
+    if(f) {
+        f.FICHA_ENVIADA = "Não"; 
+        renderCards(fichas); 
+        await salvarNaPlanilha(f.ID, "FICHA_ENVIADA", "Não");
+    }
+    fecharModalRestaurar();
+}
+
 // --- FILTROS E BUSCA ---
 
 function toggleRede() {
-    if (!filtroRede) filtroRede = "Start";
-    else if (filtroRede == "Start") filtroRede = "Diflen";
-    else if (filtroRede == "Diflen") filtroRede = "Familia";
-    else filtroRede = null;
+    const redes = [
+        "Anália - Heston", 
+        "Anália - Marcone", 
+        "Anália - Matias", 
+        "Eldorado - Elielson", 
+        "Guarulhos - Gilvane", 
+        "São Caetano - Aaron"
+    ];
+
+    if (!filtroRede) {
+        filtroRede = redes[0];
+    } else {
+        const indexAtual = redes.indexOf(filtroRede);
+        if (indexAtual === redes.length - 1) {
+            filtroRede = null;
+        } else {
+            filtroRede = redes[indexAtual + 1];
+        }
+    }
 
     const ind = document.getElementById("rede-indicator");
     if(filtroRede) {
         ind.innerText = filtroRede; 
         ind.style.display = "block";
-        ind.style.backgroundColor = `var(--${filtroRede.toLowerCase()})`;
+        const slug = criarSlug(filtroRede);
+        ind.style.backgroundColor = `var(--${slug})`;
         renderCards(fichas.filter(f => f.REDE === filtroRede));
     } else { 
         ind.style.display = "none"; 
@@ -168,9 +240,8 @@ function aplicarFiltros() {
         return passaPlanilha &&
                (!ft.b || (f["BAIRRO"] || f["Bairro"]) === ft.b) &&
                (!ft.s || (f["SEXO"] || f["Sexo"]) === ft.s) &&
-               (!ft.c || (f["ESTADO_CIVIL"] || f["Est. Civil"] || f["Estado Civil"]) === ft.c) &&
-               (!ft.d || (f["MELHOR_DIA"] || f["Melhor dia?"]) === ft.d) &&
-               (!ft.p || f["Pastor de Rede"] === ft.p);
+               (!ft.c || (f["ESTADO_CIVIL"] || f["Estado Civil"]) === ft.c) &&
+               (!ft.d || (f["MELHOR_DIA"] || f["Melhor dia?"]) === ft.d);
     });
 
     renderCards(filtradas);
@@ -187,7 +258,7 @@ function configurarDropdowns() {
     const campos = {
         "filter-bairro": ["BAIRRO", "Bairro"], 
         "filter-sexo": ["SEXO", "Sexo"], 
-        "filter-civil": ["ESTADO_CIVIL", "Est. Civil", "Estado Civil"], 
+        "filter-civil": ["ESTADO_CIVIL", "Estado Civil"], 
         "filter-dia": ["MELHOR_DIA", "Melhor dia?"], 
         "filter-pastor": ["Pastor de Rede"]
     };
@@ -202,7 +273,7 @@ function configurarDropdowns() {
     });
 }
 
-// --- IMPORTAÇÃO COM VALIDAÇÃO POR CONTEÚDO ---
+// --- IMPORTAÇÃO ---
 
 function importPlanilha() { document.getElementById("modal-importar").style.display = "flex"; }
 function fecharImportar() { document.getElementById("modal-importar").style.display = "none"; }
@@ -239,7 +310,6 @@ document.getElementById("fileInput").addEventListener("change", async function(e
         
         if (json.length === 0) throw new Error("Planilha vazia.");
 
-        // --- VALIDAÇÃO POR COLUNAS (CABEÇALHOS) ---
         const colunasDoArquivo = Object.keys(json[0]);
         const master = window.masterSelecionada;
         let validou = false;
@@ -253,9 +323,9 @@ document.getElementById("fileInput").addEventListener("change", async function(e
         }
 
         if (!validou) {
+            barra.style.width = "100%";
             barra.style.backgroundColor = "red";
-            statusTxt.innerText = "Erro: Colunas incompatíveis.";
-            alert("❌ Planilha Errada! Os dados deste arquivo não batem com o destino selecionado (verifique as colunas).");
+            statusTxt.innerText = "❌ Colunas incompatíveis! Verifique o arquivo.";
             this.value = "";
             btnOk.style.display = "block";
             return;
@@ -289,7 +359,7 @@ document.getElementById("fileInput").addEventListener("change", async function(e
 document.getElementById("search").addEventListener("input", (e) => {
     const t = e.target.value.toLowerCase();
     renderCards(fichas.filter(f => 
-        (f["NOME"] || f["Nome"] || f["Nome e sobrenome"] || "").toLowerCase().includes(t) || 
+        (f["NOME"] || f["Nome"] || "").toLowerCase().includes(t) || 
         (f["BAIRRO"] || f["Bairro"] || "").toLowerCase().includes(t)
     ));
 });
@@ -302,7 +372,7 @@ function exportar() {
     try {
         const worksheet = XLSX.utils.json_to_sheet(fichas);
         const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Todas as Fichas");
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Fichas");
         const dataAtual = new Date().toLocaleDateString().replace(/\//g, '-');
         XLSX.writeFile(workbook, `easyfichas_completo_${dataAtual}.xlsx`);
     } catch (error) {
