@@ -29,19 +29,9 @@ function renderCards(lista) {
   }
 
   lista.forEach(f => {
-    // Função auxiliar para criar a classe da rede (slug) - Sincronizada com app.js e CSS
-    const criarClasseRede = (texto) => {
-        if (!texto) return "";
-        return texto.toLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "") // Remove acentos
-            .replace(/\s+/g, '-')           // Espaço vira hífen
-            .replace(/[^a-z0-9-]/g, '')    // Remove símbolos
-            .replace(/-+/g, '-')           // Evita hífens duplos
-            .replace(/^-+|-+$/g, '');      // Remove hífens nas pontas
-    };
-
-    const classeRede = criarClasseRede(f.REDE);
+    // Busca a configuração da rede no arquivo config.js
+    const infoRede = typeof CONFIG_REDES !== 'undefined' ? CONFIG_REDES.find(r => r.nome === f.REDE) : null;
+    const corRede = infoRede ? infoRede.cor : "transparent";
 
     // Mapeamento de campos básicos
     const nome = f["NOME"] || f["Nome"] || f["Nome e sobrenome"] || "Sem Nome";
@@ -54,13 +44,13 @@ function renderCards(lista) {
     const tagCivil = f["ESTADO_CIVIL"] || f["Est. Civil"] || f["Estado Civil"] || "";
     const tagFilhos = f["Filhos (de 2-11)?"] || f["Filhos"] || "";
 
-    // 1. Define a classe de cor baseada na planilha de origem
+    // Define a classe de cor baseada na planilha de origem
     let classeOrigem = "";
     if (f.ORIGEM === "LIFE_GROUPS_MASTER") classeOrigem = "card-life-groups";
     else if (f.ORIGEM === "NOVO_NASCIMENTO_MASTER") classeOrigem = "card-novo-nascimento";
     else if (f.ORIGEM === "DECISAO_POR_JESUS_ONLINE_MASTER") classeOrigem = "card-decisao-online";
 
-    // 2. Lógica condicional de exibição de informações por Origem
+    // Lógica condicional de exibição de informações por Origem
     let infoLinha1, infoLinha2, icone1, icone2;
 
     if (f.ORIGEM === "NOVO_NASCIMENTO_MASTER") {
@@ -70,7 +60,6 @@ function renderCards(lista) {
         infoLinha1 = `Idade: ${idade}`;
         icone2 = "users"; 
         infoLinha2 = `No Life? ${noLife}`;
-
     } else if (f.ORIGEM === "DECISAO_POR_JESUS_ONLINE_MASTER") {
         const idade = f["Idade"] || f["idade"] || "Não inf.";
         const noLife = f["Já está em um Life Group?"] || f["Já num Life?"] || "Não inf.";
@@ -78,9 +67,7 @@ function renderCards(lista) {
         infoLinha1 = endereco || `${bairro} - ${cidade}`;
         icone2 = "info"; 
         infoLinha2 = `Idade: ${idade} | Life: ${noLife}`;
-
     } else {
-        // Padrão (Life Groups Master)
         const melhorDia = f["MELHOR_DIA"] || f["Melhor dia?"] || f["Melhor dia"] || "Não informado";
         icone1 = "map-pin";
         infoLinha1 = `${bairro} - ${cidade}`;
@@ -88,18 +75,19 @@ function renderCards(lista) {
         infoLinha2 = `Melhor dia: ${melhorDia}`;
     }
 
-    // 3. Criação do elemento Card
     const card = document.createElement("div");
-    card.className = `card ${classeRede} ${classeOrigem}`;
+    card.className = `card ${classeOrigem}`;
+    // Aplica a cor da borda lateral dinamicamente
+    card.style.borderLeftColor = corRede;
 
     card.innerHTML = `
-  <div class="rede-highlight" style="background: var(--${classeRede})"></div>
+  <div class="rede-highlight" style="background: ${corRede}"></div>
   <div class="card-header">
     <div style="flex: 1;">
       <div class="name">${nome}</div>
       <div style="display:flex; flex-direction: column; gap: 4px; align-items: flex-start; margin-top: 6px;">
         ${f.FICHA_ENVIADA === "Sim" ? `<span class="tag-rede" style="background: #666; font-size:9px;">ENVIADA</span>` : ''}
-        ${f.REDE ? `<span class="tag-rede ${classeRede}">${f.REDE}</span>` : ''}
+        ${f.REDE ? `<span class="tag-rede" style="background: ${corRede}; color: white;">${f.REDE}</span>` : ''}
       </div>
     </div>
     <div style="display: flex; gap: 8px; align-items: center;">
