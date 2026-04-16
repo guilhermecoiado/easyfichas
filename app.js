@@ -44,14 +44,13 @@ function validarLogin() {
 // Chame a verificação assim que o script carregar
 verificarLoginSalvo();
 
-// AJUSTE: Remova a chamada automática de init() no final do arquivo app.js
-// Em vez de deixar apenas "init();", deixe o login chamar o init.
-// Se você quiser que o Enter funcione no teclado:
+// Ajuste para o Enter no teclado
 document.addEventListener('keypress', function (e) {
     if (e.key === 'Enter' && document.getElementById("login-container").style.display !== "none") {
         validarLogin();
     }
 });
+
 // Função auxiliar para padronizar classes de rede (Slug)
 const criarSlug = (texto) => {
     if (!texto) return "";
@@ -101,7 +100,9 @@ async function init() {
     fichas = await getFichas();
     
     if(Array.isArray(fichas)) {
-        renderCards(fichas);
+        // Inicializa mostrando apenas as não enviadas
+        const naoEnviadas = fichas.filter(f => f.FICHA_ENVIADA !== "Sim");
+        renderCards(naoEnviadas);
         configurarDropdowns();
         atualizarContadores();
     }
@@ -111,22 +112,25 @@ async function init() {
         lucide.createIcons();
     }, 1500);
 }
-
 // --- NAVEGAÇÃO E TELAS ---
 
 function home() { 
     document.getElementById("title").innerText = "easyfichas"; 
     document.getElementById("rede-indicator").style.display = "none";
     filtroRede = null;
-    renderCards(fichas); 
+    // Filtra para mostrar apenas o que NÃO foi enviado
+    const naoEnviadas = fichas.filter(f => f.FICHA_ENVIADA !== "Sim");
+    renderCards(naoEnviadas); 
 }
 
 function showSent() {
-    const filtradas = fichas.filter(f => f.FICHA_ENVIADA === "Sim");
-    document.getElementById("title").innerText = "Enviadas";
+    // Se estiver filtrando por rede, mostra as enviadas daquela rede. Se não, mostra todas as enviadas.
+    const base = filtroRede ? fichas.filter(f => f.REDE === filtroRede) : fichas;
+    const filtradas = base.filter(f => f.FICHA_ENVIADA === "Sim");
+    
+    document.getElementById("title").innerText = `Enviadas (${filtradas.length})`;
     renderCards(filtradas);
 }
-
 function showFavorites() {
     const filtradas = fichas.filter(f => f.FAVORITO === "Sim");
     document.getElementById("title").innerText = "Favoritos";
@@ -219,54 +223,67 @@ function fecharModalRestaurar() {
 }
 
 async function processarRestauracao() {
-    // 1. Fecha o modal imediatamente para dar feedback visual instantâneo
     fecharModalRestaurar();
-
     const f = fichas.find(x => x.ID == fichaPendenteRestaurar);
     if(f) {
-        // 2. Atualiza a interface local na hora
         f.FICHA_ENVIADA = "Não"; 
         renderCards(fichas); 
-        
-        // 3. Deixa a atualização da planilha rodando em segundo plano
         salvarNaPlanilha(f.ID, "FICHA_ENVIADA", "Não");
     }
 }
 
 // --- FILTROS E BUSCA ---
 
+// Abre o popup de filtro de rede e cria os botões dinamicamente
 function toggleRede() {
-    const redes = [
-        "Anália - Heston", 
-        "Anália - Marcone", 
-        "Anália - Matias", 
-        "Eldorado - Elielson", 
-        "Guarulhos - Gilvane", 
-        "São Caetano - Aaron"
-    ];
+    const container = document.getElementById("container-filtro-redes");
+    if(!container) return;
+    
+    container.innerHTML = ""; // Limpa anterior
 
-    if (!filtroRede) {
-        filtroRede = redes[0];
-    } else {
-        const indexAtual = redes.indexOf(filtroRede);
-        if (indexAtual === redes.length - 1) {
-            filtroRede = null;
-        } else {
-            filtroRede = redes[indexAtual + 1];
-        }
-    }
+    CONFIG_REDES.forEach(rede => {
+        const btn = document.createElement("button");
+        btn.innerText = rede.nome;
+        btn.style.cssText = `background: ${rede.cor}; color: white; padding: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold;`;
+        btn.onclick = () => selecionarFiltroRede(rede);
+        container.appendChild(btn);
+    });
 
+    document.getElementById("modal-filtro-rede").style.display = "flex";
+}
+
+// Aplica o filtro selecionado e fecha o modal
+function selecionarFiltroRede(redeConfig) {
     const ind = document.getElementById("rede-indicator");
-    if(filtroRede) {
+    const telaAtual = document.getElementById("title").innerText;
+
+    if(redeConfig) {
+        filtroRede = redeConfig.nome;
         ind.innerText = filtroRede; 
         ind.style.display = "block";
-        const slug = criarSlug(filtroRede);
-        ind.style.backgroundColor = `var(--${slug})`;
-        renderCards(fichas.filter(f => f.REDE === filtroRede));
-    } else { 
+        ind.style.backgroundColor = redeConfig.cor;
+    } else {
+        filtroRede = null;
         ind.style.display = "none"; 
-        renderCards(fichas); 
     }
+
+    // Lógica para decidir o que renderizar após filtrar a rede
+    if (telaAtual.startsWith("Enviadas")) {
+        showSent();
+    } else if (telaAtual === "Favoritos") {
+        showFavorites();
+    } else {
+        // Se estiver na Home, filtra a rede mas mantém ocultas as enviadas
+        const base = filtroRede ? fichas.filter(f => f.REDE === filtroRede) : fichas;
+        renderCards(base.filter(f => f.FICHA_ENVIADA !== "Sim"));
+    }
+    
+    atualizarContadores();
+    fecharFiltroRede();
+}
+
+function fecharFiltroRede() {
+    document.getElementById("modal-filtro-rede").style.display = "none";
 }
 
 function openFilter() { document.getElementById("modal-filtros").style.display = "flex"; }
@@ -437,14 +454,24 @@ function openWhats(t) { if(t) window.open(`https://wa.me/55${t.replace(/\D/g,"")
 function openMap(e) { if(e) window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e)}`, "_blank"); }
 
 function atualizarContadores() {
-    const totalLife = fichas.filter(f => f.ORIGEM === "LIFE_GROUPS_MASTER").length;
-    const totalDecisao = fichas.filter(f => 
-        f.ORIGEM === "NOVO_NASCIMENTO_MASTER" || 
-        f.ORIGEM === "DECISAO_POR_JESUS_ONLINE_MASTER"
-    ).length;
+    // Se houver filtro de rede ativo, baseamos os cálculos apenas naquela rede
+    const baseFichas = filtroRede ? fichas.filter(f => f.REDE === filtroRede) : fichas;
 
-    document.getElementById("count-lifegroups").innerText = totalLife;
-    document.getElementById("count-decisao").innerText = totalDecisao;
+    const totalGeral = baseFichas.length;
+    const totalEnviadas = baseFichas.filter(f => f.FICHA_ENVIADA === "Sim").length;
+    const totalPendentes = totalGeral - totalEnviadas;
+
+    // Atualiza os badges de origem (Lifegroups / Novo Nascimento)
+    document.getElementById("count-lifegroups").innerText = baseFichas.filter(f => f.ORIGEM === "LIFE_GROUPS_MASTER").length;
+    document.getElementById("count-decisao").innerText = baseFichas.filter(f => f.ORIGEM === "NOVO_NASCIMENTO_MASTER" || f.ORIGEM === "DECISAO_POR_JESUS_ONLINE_MASTER").length;
+
+    // Se você quiser mostrar o total de enviadas no título quando estiver na tela de enviadas:
+    if (document.getElementById("title").innerText === "Enviadas") {
+        document.getElementById("title").innerText = `Enviadas (${totalEnviadas})`;
+    }
+    
+    // Log para depuração no console (opcional)
+    console.log(`Rede: ${filtroRede || 'Todas'} | Total: ${totalGeral} | Enviadas: ${totalEnviadas}`);
 }
 
 function filtrarPorPlanilhaRapido(tipo) {
@@ -453,3 +480,20 @@ function filtrarPorPlanilhaRapido(tipo) {
     aplicarFiltros();
 }
 
+function abrirSeletorRede(id) {
+    window.fichaParaTaguear = id;
+    const container = document.getElementById("container-seletor-redes");
+    if(!container) return;
+    
+    container.innerHTML = ""; // Limpa anterior
+
+    CONFIG_REDES.forEach(rede => {
+        const btn = document.createElement("button");
+        btn.innerText = rede.nome;
+        btn.style.cssText = `background: ${rede.cor}; color: white; padding: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold;`;
+        btn.onclick = () => aplicarTagRede(rede.nome);
+        container.appendChild(btn);
+    });
+
+    document.getElementById("modal-rede").style.display = "flex";
+}
