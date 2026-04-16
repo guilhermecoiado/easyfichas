@@ -151,16 +151,10 @@
 <div id="modal-rede" class="modal" onclick="if(event.target == this) fecharModalRede()">
     <div class="modal-content" style="max-width: 350px;">
         <h3 style="margin-bottom: 20px; text-align: center;">Vincular à Rede:</h3>
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-            <button onclick="aplicarTagRede('Anália - Heston')" style="background:var(--analia-heston); color:white; padding:12px; border-radius:10px;">Anália - Heston</button>
-            <button onclick="aplicarTagRede('Anália - Marcone')" style="background:var(--analia-marcone); color:white; padding:12px; border-radius:10px;">Anália - Marcone</button>
-            <button onclick="aplicarTagRede('Anália - Matias')" style="background:var(--analia-matias); color:white; padding:12px; border-radius:10px;">Anália - Matias</button>
-            <button onclick="aplicarTagRede('Eldorado - Elielson')" style="background:var(--eldorado-elielson); color:white; padding:12px; border-radius:10px;">Eldorado - Elielson</button>
-            <button onclick="aplicarTagRede('Guarulhos - Gilvane')" style="background:var(--guarulhos-gilvane); color:white; padding:12px; border-radius:10px;">Guarulhos - Gilvane</button>
-            <button onclick="aplicarTagRede('São Caetano - Aaron')" style="background:var(--sao-caetano-aaron); color:white; padding:12px; border-radius:10px;">São Caetano - Aaron</button>
-            <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
-            <button onclick="aplicarTagRede('')" style="background:#eee; color:#666; padding:12px; border-radius:10px;">Remover Rede</button>
-        </div>
+        <div id="container-seletor-redes" style="display: flex; flex-direction: column; gap: 8px;">
+            </div>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
+        <button onclick="aplicarTagRede('')" style="background:#eee; color:#666; padding:12px; border-radius:10px; width: 100%;">Remover Rede</button>
     </div>
 </div>
 
@@ -206,7 +200,16 @@
         <button onclick="fecharModalDetalhes()" class="btn-primario" style="margin-top:20px; width:100%;">Fechar</button>
     </div>
 </div>
-
+<div id="modal-filtro-rede" class="modal" onclick="if(event.target == this) fecharFiltroRede()">
+    <div class="modal-content" style="max-width: 350px;">
+        <h3 style="margin-bottom: 20px; text-align: center;">Filtrar por Rede:</h3>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
+        <button onclick="selecionarFiltroRede(null)" style="background:#eee; color:#666; padding:12px; border-radius:10px; width: 100%; border: none; font-weight: bold; cursor: pointer;">Ver Todas as Redes</button>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
+        <div id="container-filtro-redes" style="display: flex; flex-direction: column; gap: 8px;">
+            </div>
+    </div>
+</div>
 <link rel="manifest" href="manifest.json">
 <script>
   if ('serviceWorker' in navigator) {
@@ -215,6 +218,7 @@
 </script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="sheets.js"></script>
+<script src="config.js"></script>
 <script src="ui.js"></script>
 <script src="app.js"></script>
 </body>
