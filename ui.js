@@ -10,12 +10,18 @@ function renderCards(lista) {
   if (!lista || lista.length === 0) {
     let mensagem = "Banco de fichas vazio."; // Mensagem padrão
 
-    if (redeAtiva) {
-      mensagem = "Sem fichas para essa rede.";
-    } else if (tituloPagina === "Enviadas") {
-      mensagem = "Sem fichas enviadas.";
+    // Verifica se o motivo de estar vazio é porque tudo já foi enviado
+    const baseFiltradaRede = redeAtiva ? fichas.filter(f => f.REDE === filtroRede) : fichas;
+    const temFichasMasEstaoEnviadas = baseFiltradaRede.length > 0 && baseFiltradaRede.every(f => f.FICHA_ENVIADA === "Sim");
+
+    if (temFichasMasEstaoEnviadas) {
+        mensagem = redeAtiva ? "Todas as fichas dessa rede foram enviadas." : "Todas as fichas foram enviadas.";
+    } else if (redeAtiva) {
+        mensagem = "Sem fichas para essa rede.";
+    } else if (tituloPagina.startsWith("Enviadas")) {
+        mensagem = "Sem fichas enviadas.";
     } else if (tituloPagina === "Favoritos") {
-      mensagem = "Sem fichas favoritadas.";
+        mensagem = "Sem fichas favoritadas.";
     }
 
     cards.innerHTML = `
@@ -77,7 +83,6 @@ function renderCards(lista) {
 
     const card = document.createElement("div");
     card.className = `card ${classeOrigem}`;
-    // Aplica a cor da borda lateral dinamicamente
     card.style.borderLeftColor = corRede;
 
     card.innerHTML = `
