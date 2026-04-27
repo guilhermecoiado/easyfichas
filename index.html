@@ -64,6 +64,7 @@
 </header>
 
 <div class="summary-shortcuts">
+
     <div class="shortcut-card lifegroups" onclick="filtrarPorPlanilhaRapido('lifegroups')">
         <div class="shortcut-content">
             <i data-lucide="bar-chart-2"></i>
@@ -72,13 +73,22 @@
         <span class="badge" id="count-lifegroups">0</span>
     </div>
 
-    <div class="shortcut-card decisao" onclick="filtrarPorPlanilhaRapido('decisao')">
+    <div class="shortcut-card decisao" onclick="filtrarPorPlanilhaRapido('novo')">
         <div class="shortcut-content">
             <i data-lucide="sparkles"></i>
             <span>Novo Nascimento</span>
         </div>
+        <span class="badge" id="count-novo">0</span>
+    </div>
+
+    <div class="shortcut-card decisao" onclick="filtrarPorPlanilhaRapido('decisao')">
+        <div class="shortcut-content">
+            <i data-lucide="globe"></i>
+            <span>Decisão Online</span>
+        </div>
         <span class="badge" id="count-decisao">0</span>
     </div>
+
 </div>
 <div id="cards"></div>
 
