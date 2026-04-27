@@ -28,7 +28,7 @@
 
 /* 2. Ajuste Sutil dos CARDS: Fundo Branco + Borda Lateral Grossa */
 .card { 
-    background: white !important; /* Força o fundo branco sempre */
+    background: white !important;
     border-radius: 16px; 
     padding: 16px; 
     margin: 15px; 
@@ -39,7 +39,6 @@
     border-left: 8px solid transparent; 
 }
 
-/* Aplicamos apenas a cor da borda, sem mexer no fundo do card */
 .card.analia-heston { border-left-color: var(--analia-heston) !important; }
 .card.analia-marcone { border-left-color: var(--analia-marcone) !important; }
 .card.analia-matias { border-left-color: var(--analia-matias) !important; }
@@ -110,7 +109,6 @@ header { background: white; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.0
     align-items: center;
     justify-content: center;
     z-index: 99999;
-    /* Isso garante que ele desapareça suavemente em vez de sumir de vez */
     transition: opacity 0.5s ease, visibility 0.5s; 
 }
 
@@ -118,7 +116,7 @@ header { background: white; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.0
     opacity: 0;
     visibility: hidden;
 }
-/* Estilização da animação da ficha */
+
 .paper-animation {
     font-size: 48px;
     color: var(--primary);
@@ -134,23 +132,12 @@ header { background: white; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.0
     height: 60px;
 }
 
-/* Animação de flutuar e brilhar */
 @keyframes floatPaper {
-    0% {
-        transform: translateY(0px) rotate(0deg);
-        opacity: 0.6;
-    }
-    50% {
-        transform: translateY(-20px) rotate(5deg);
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(0px) rotate(0deg);
-        opacity: 0.6;
-    }
+    0% { transform: translateY(0px) rotate(0deg); opacity: 0.6; }
+    50% { transform: translateY(-20px) rotate(5deg); opacity: 1; }
+    100% { transform: translateY(0px) rotate(0deg); opacity: 0.6; }
 }
 
-/* Ajuste no texto de carregamento */
 .loader-content span {
     font-weight: 600;
     color: var(--primary);
@@ -165,39 +152,27 @@ header { background: white; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.0
 
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-/* Planilhas Base (Sutileza mantida caso não haja rede) */
 .card-novo-nascimento { border-left: 4px solid #2196F3; }
 .card-decisao-online { border-left: 4px solid #FF9800; }
 
-.summary-shortcuts { display: flex; gap: 12px; padding: 10px 16px; max-width: 500px; margin: 0 auto; }
-.shortcut-card { flex: 1; display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; border: 1px solid rgba(0,0,0,0.05); }
-/* Ajuste para 3 atalhos no topo */
-.summary-shortcuts{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:10px;
+/* ALTERAÇÃO NECESSÁRIA PARA 3 ATALHOS */
+.summary-shortcuts { 
+    display: grid; 
+    grid-template-columns: repeat(3,1fr); 
+    gap: 12px; 
+    padding: 10px 16px; 
+    max-width: 500px; 
+    margin: 0 auto; 
 }
 
-.summary-shortcuts .shortcut-card{
-    padding:12px;
-}
+.shortcut-card { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; border: 1px solid rgba(0,0,0,0.05); }
 
-.summary-shortcuts .shortcut-content{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:6px;
-    font-size:12px;
-}
-
-.summary-shortcuts .shortcut-content i{
-    width:20px;
-    height:20px;
-}
 .lifegroups { background-color: #E8EBF7; color: #3F51B5; }
 .decisao { background-color: #F3E5F5; color: #7B1FA2; }
+
 .shortcut-content { display: flex; align-items: center; gap: 8px; }
 .shortcut-content span { font-weight: 700; font-size: 13px; }
+
 .badge { background: rgba(0, 0, 0, 0.2); color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 800; }
 
 .detalhes-lista { display: flex; flex-direction: column; gap: 12px; max-height: 60vh; overflow-y: auto; text-align: left; }
@@ -206,5 +181,3 @@ header { background: white; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.0
 .detalhe-item span { font-size: 15px; color: #333; word-break: break-word; }
 .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 .close-btn { background: none; border: none; font-size: 28px; cursor: pointer; color: #888; }
-
-
