@@ -1,3 +1,13 @@
+function tagOrigem(origem) {
+    if (origem === 'LIFE_GROUPS_MASTER')
+    return `<span class="tag-origem tag-origem--lifegroups"><i data-lucide="users"></i>Lifegroups</span>`;
+    if (origem === 'NOVO_NASCIMENTO_MASTER')
+        return `<span class="tag-origem tag-origem--novo-nascimento"><i data-lucide="sparkles"></i>Novo Nasc.</span>`;
+    if (origem === 'DECISAO_POR_JESUS_ONLINE_MASTER')
+        return `<span class="tag-origem tag-origem--online"><span class="tag-origem-dot"></span>Online</span>`;
+    return '';
+}
+
 function renderCards(lista) {
   const cards = document.getElementById("cards");
   cards.innerHTML = "";
@@ -49,6 +59,7 @@ function renderCards(lista) {
     const tagSexo = f["SEXO"] || f["Sexo"] || "";
     const tagCivil = f["ESTADO_CIVIL"] || f["Est. Civil"] || f["Estado Civil"] || "";
     const tagFilhos = f["Filhos (de 2-11)?"] || f["Filhos"] || "";
+    const enviadoPara = f["ENVIADO_PARA"] || f["Enviado_Para"] || "";
 
     // Define a classe de cor baseada na planilha de origem
     let classeOrigem = "";
@@ -90,8 +101,10 @@ function renderCards(lista) {
   <div class="card-header">
     <div style="flex: 1;">
       <div class="name">${nome}</div>
+      ${tagOrigem(f.ORIGEM)}
       <div style="display:flex; flex-direction: column; gap: 4px; align-items: flex-start; margin-top: 6px;">
         ${f.FICHA_ENVIADA === "Sim" ? `<span class="tag-rede" style="background: #666; font-size:9px;">ENVIADA</span>` : ''}
+        ${f.FICHA_ENVIADA === "Sim" && enviadoPara ? `<span class="tag-destinatario"><i data-lucide="user"></i>${enviadoPara}</span>` : ''}
         ${f.REDE ? `<span class="tag-rede" style="background: ${corRede}; color: white;">${f.REDE}</span>` : ''}
       </div>
     </div>
