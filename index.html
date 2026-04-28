@@ -64,7 +64,6 @@
 </header>
 
 <div class="summary-shortcuts">
-
     <div class="shortcut-card lifegroups" onclick="filtrarPorPlanilhaRapido('lifegroups')">
         <div class="shortcut-content">
             <i data-lucide="bar-chart-2"></i>
@@ -73,24 +72,14 @@
         <span class="badge" id="count-lifegroups">0</span>
     </div>
 
-   <div class="shortcut-card decisao" onclick="filtrarPorPlanilhaRapido('novo_nascimento')">
+    <div class="shortcut-card decisao" onclick="filtrarPorPlanilhaRapido('decisao')">
         <div class="shortcut-content">
             <i data-lucide="sparkles"></i>
             <span>Novo Nascimento</span>
         </div>
-        <span class="badge" id="count-novo">0</span>
-    </div>
-
-    <div class="shortcut-card decisao" onclick="filtrarPorPlanilhaRapido('decisao')">
-        <div class="shortcut-content">
-            <i data-lucide="globe"></i>
-            <span>Decisão Online</span>
-        </div>
         <span class="badge" id="count-decisao">0</span>
     </div>
-
 </div>
-
 <div id="cards"></div>
 
 <nav class="bottom-nav">
@@ -138,8 +127,7 @@
             <select id="filter-planilha" class="filter-input">
                 <option value="">Planilha (Todas)</option>
                 <option value="lifegroups">Lifegroups</option>
-                <option value="novo">Novo Nascimento</option>
-                <option value="decisao">Decisão Online</option>
+                <option value="decisao">Decisão por Jesus</option>
             </select>
             <div style="display:flex; gap:10px; margin-top:10px;">
                 <button onclick="limparFiltros()" style="flex:1; background:#eee; padding:12px; border-radius:10px;">Limpar</button>
@@ -160,6 +148,68 @@
     </div>
 </div>
 
+<div id="modal-rede" class="modal" onclick="if(event.target == this) fecharModalRede()">
+    <div class="modal-content" style="max-width: 350px;">
+        <h3 style="margin-bottom: 20px; text-align: center;">Vincular à Rede:</h3>
+        <div id="container-seletor-redes" style="display: flex; flex-direction: column; gap: 8px;">
+            </div>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
+        <button onclick="aplicarTagRede('')" style="background:#eee; color:#666; padding:12px; border-radius:10px; width: 100%;">Remover Rede</button>
+    </div>
+</div>
+
+<div id="modal-confirm-envio" class="modal" onclick="if(event.target == this) fecharModalEnvio()">
+    <div class="modal-content" style="max-width: 320px; text-align: center;">
+        <h3 style="margin-bottom: 10px;">Enviar Ficha?</h3>
+        <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Marcar como enviada e abrir WhatsApp?</p>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="fecharModalEnvio()" style="flex: 1; padding: 12px; background: #eee; border-radius: 10px;">Não</button>
+            <button onclick="processarEnvio()" style="flex: 1; padding: 12px; background: var(--primary); color: white; border-radius: 10px;">Sim</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-confirm-restaurar" class="modal">
+    <div class="modal-content" style="text-align: center;">
+        <h3 style="margin-bottom: 15px;">Restaurar Ficha?</h3>
+        <p style="margin-bottom: 20px; color: #666;">Tem certeza que deseja reivindicar o envio dessa ficha? Ela voltará para a lista principal.</p>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="fecharModalRestaurar()" style="flex: 1; padding: 12px; border-radius: 10px; border: none; background: #eee; color: #333; font-weight: bold; cursor: pointer;">Não</button>
+            <button onclick="processarRestauracao()" style="flex: 1; padding: 12px; border-radius: 10px; border: none; background: var(--primary); color: white; font-weight: bold; cursor: pointer;">Sim, Restaurar</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-progresso" class="modal">
+    <div class="modal-content" style="max-width: 300px; text-align: center;">
+        <h3 id="status-importacao">Importando dados...</h3>
+        <div style="width: 100%; background: #eee; height: 10px; border-radius: 5px; margin: 15px 0; overflow: hidden;">
+            <div id="barra-progresso" style="width: 0%; height: 100%; background: var(--primary); transition: width 0.3s;"></div>
+        </div>
+        <button id="btn-concluir-import" onclick="fecharModalProgresso()" style="display: none; width: 100%; padding: 10px; background: var(--primary); color: white; border-radius: 8px; border: none;">OK</button>
+    </div>
+</div>
+
+<div id="modal-detalhes" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Detalhes da Ficha</h3>
+            <button onclick="fecharModalDetalhes()" class="close-btn">&times;</button>
+        </div>
+        <div id="detalhes-content"></div>
+        <button onclick="fecharModalDetalhes()" class="btn-primario" style="margin-top:20px; width:100%;">Fechar</button>
+    </div>
+</div>
+<div id="modal-filtro-rede" class="modal" onclick="if(event.target == this) fecharFiltroRede()">
+    <div class="modal-content" style="max-width: 350px;">
+        <h3 style="margin-bottom: 20px; text-align: center;">Filtrar por Rede:</h3>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
+        <button onclick="selecionarFiltroRede(null)" style="background:#eee; color:#666; padding:12px; border-radius:10px; width: 100%; border: none; font-weight: bold; cursor: pointer;">Ver Todas as Redes</button>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
+        <div id="container-filtro-redes" style="display: flex; flex-direction: column; gap: 8px;">
+            </div>
+    </div>
+</div>
 <link rel="manifest" href="manifest.json">
 <script>
   if ('serviceWorker' in navigator) {
