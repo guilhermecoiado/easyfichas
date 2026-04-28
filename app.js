@@ -1,4 +1,4 @@
-const API = "https://script.google.com/macros/s/AKfycbyge5Ik_wxlRAGW2JdwUnFTG4X3WyZmUhscR3CMDkm6EoFfXDrd82uHBFLgOi_zyzptig/exec";
+const API = "https://script.google.com/macros/s/AKfycbw2yBR_PMRAqLx4FRHjU3PduvbAJxZsAxfUtNf4EV01m7S83jjCfZm95OHva6NH2Yumwg/exec";
 let fichas = [];
 let filtroRede = null;
 let fichaPendenteEnvio = null;
@@ -100,8 +100,8 @@ async function init() {
     fichas = await getFichas();
     
     if(Array.isArray(fichas)) {
-        // Inicializa mostrando apenas as não enviadas
-        const naoEnviadas = fichas.filter(f => f.FICHA_ENVIADA !== "Sim");
+        // Inicializa mostrando apenas as não enviadas em ordem alfabética
+        const naoEnviadas = ordenarAlfabetica(fichas.filter(f => f.FICHA_ENVIADA !== "Sim"));
         renderCards(naoEnviadas);
         configurarDropdowns();
         atualizarContadores();
@@ -114,27 +114,142 @@ async function init() {
 }
 // --- NAVEGAÇÃO E TELAS ---
 
+function obterNomeOrdenacaoFicha(f) {
+    return (f["NOME"] || f["Nome"] || f["Nome e sobrenome"] || "").toString().trim();
+}
+
+function ordenarAlfabetica(lista) {
+    return [...lista].sort((a, b) => {
+        const nomeA = obterNomeOrdenacaoFicha(a);
+        const nomeB = obterNomeOrdenacaoFicha(b);
+        return nomeA.localeCompare(nomeB, "pt-BR", { sensitivity: "base" });
+    });
+}
+
+function ordenarNaoEnviadasPrimeiro(lista) {
+    return [...lista].sort((a, b) => {
+        const ordemA = a.FICHA_ENVIADA === "Sim" ? 1 : 0;
+        const ordemB = b.FICHA_ENVIADA === "Sim" ? 1 : 0;
+        if (ordemA !== ordemB) return ordemA - ordemB;
+        const nomeA = obterNomeOrdenacaoFicha(a);
+        const nomeB = obterNomeOrdenacaoFicha(b);
+        return nomeA.localeCompare(nomeB, "pt-BR", { sensitivity: "base" });
+    });
+}
+
+function aplicarFiltroRede(lista) {
+    return filtroRede ? lista.filter(f => f.REDE === filtroRede) : lista;
+}
+
+function montarListaDaTelaAtual() {
+    const tituloAtual = document.getElementById("title").innerText || "";
+    const planilha = document.getElementById("filter-planilha").value;
+
+    let base = aplicarFiltroRede(fichas);
+
+    if (tituloAtual.startsWith("Enviadas")) {
+        return ordenarAlfabetica(base.filter(f => f.FICHA_ENVIADA === "Sim"));
+    }
+
+    if (tituloAtual === "Favoritos") {
+        return ordenarAlfabetica(base.filter(f => f.FAVORITO === "Sim"));
+    }
+
+    if (planilha === "lifegroups") {
+        return ordenarNaoEnviadasPrimeiro(base.filter(f => f.ORIGEM === "LIFE_GROUPS_MASTER"));
+    }
+
+    if (planilha === "novo-nascimento") {
+        return ordenarNaoEnviadasPrimeiro(base.filter(f => f.ORIGEM === "NOVO_NASCIMENTO_MASTER"));
+    }
+
+    if (planilha === "decisao-online") {
+        return ordenarNaoEnviadasPrimeiro(base.filter(f => f.ORIGEM === "DECISAO_POR_JESUS_ONLINE_MASTER"));
+    }
+
+    // Home padrão: apenas não enviadas em ordem alfabética
+    return ordenarAlfabetica(base.filter(f => f.FICHA_ENVIADA !== "Sim"));
+}
+
+function mostrarModoHome() {
+    document.getElementById("summary-shortcuts").style.display = "";
+    document.getElementById("enviadas-filter").style.display = "none";
+}
+
+function mostrarModoEnviadas() {
+    document.getElementById("summary-shortcuts").style.display = "none";
+    document.getElementById("enviadas-filter").style.display = "";
+    // Atualiza totais dos pills
+    const base = aplicarFiltroRede(fichas).filter(f => f.FICHA_ENVIADA === "Sim");
+    document.getElementById("pill-count-todas").innerText          = base.length;
+    document.getElementById("pill-count-lifegroups").innerText     = base.filter(f => f.ORIGEM === "LIFE_GROUPS_MASTER").length;
+    document.getElementById("pill-count-novo-nascimento").innerText = base.filter(f => f.ORIGEM === "NOVO_NASCIMENTO_MASTER").length;
+    document.getElementById("pill-count-decisao-online").innerText  = base.filter(f => f.ORIGEM === "DECISAO_POR_JESUS_ONLINE_MASTER").length;
+    lucide.createIcons();
+}
+
 function home() { 
     document.getElementById("title").innerText = "easyfichas"; 
     document.getElementById("rede-indicator").style.display = "none";
-    filtroRede = null; // Reseta a rede ao voltar para a home geral
-    document.getElementById("filter-planilha").value = ""; // Reseta o filtro de planilha
-    
-    const naoEnviadas = fichas.filter(f => f.FICHA_ENVIADA !== "Sim");
+    filtroRede = null;
+    document.getElementById("filter-planilha").value = "";
+    atualizarCorBusca(null);
+    mostrarModoHome();
+    const naoEnviadas = ordenarAlfabetica(fichas.filter(f => f.FICHA_ENVIADA !== "Sim"));
     renderCards(naoEnviadas); 
     atualizarContadores();
 }
 
 function showSent() {
-    // Se estiver filtrando por rede, mostra as enviadas daquela rede. Se não, mostra todas as enviadas.
-    const base = filtroRede ? fichas.filter(f => f.REDE === filtroRede) : fichas;
-    const filtradas = base.filter(f => f.FICHA_ENVIADA === "Sim");
-    
-    document.getElementById("title").innerText = `Enviadas (${filtradas.length})`;
-    renderCards(filtradas);
+    document.getElementById("filter-planilha").value = "";
+    atualizarCorBusca(null);
+    mostrarModoEnviadas();
+    filtrarEnviadas("todas");
+}
+
+function abrirFiltroEnviadas() {
+    document.getElementById("enviadas-backdrop").classList.add("open");
+    document.getElementById("enviadas-sheet").classList.add("open");
+    lucide.createIcons();
+}
+
+function fecharFiltroEnviadas() {
+    document.getElementById("enviadas-backdrop").classList.remove("open");
+    document.getElementById("enviadas-sheet").classList.remove("open");
+}
+
+function filtrarEnviadas(tipo) {
+    fecharFiltroEnviadas();
+
+    const base = ordenarAlfabetica(aplicarFiltroRede(fichas).filter(f => f.FICHA_ENVIADA === "Sim"));
+    let lista = base;
+    if (tipo === "lifegroups")           lista = base.filter(f => f.ORIGEM === "LIFE_GROUPS_MASTER");
+    else if (tipo === "novo-nascimento") lista = base.filter(f => f.ORIGEM === "NOVO_NASCIMENTO_MASTER");
+    else if (tipo === "decisao-online")  lista = base.filter(f => f.ORIGEM === "DECISAO_POR_JESUS_ONLINE_MASTER");
+
+    document.getElementById("title").innerText = `Enviadas (${lista.length})`;
+    renderCards(lista);
+
+    // Label na barra
+    const labels = { todas: "Todas", lifegroups: "Lifegroups", "novo-nascimento": "Novo Nasc.", "decisao-online": "Decis\u00e3o Online" };
+    document.getElementById("enviadas-filtro-texto").innerText = labels[tipo] || "Todas";
+
+    // Estado ativo nos itens do sheet
+    document.querySelectorAll(".enviadas-sheet-item").forEach(el => {
+        el.className = "enviadas-sheet-item";
+    });
+    const classeAtiva = tipo === "todas" ? "active" :
+                        tipo === "lifegroups" ? "active-lifegroups" :
+                        tipo === "novo-nascimento" ? "active-novo-nascimento" :
+                        "active-decisao-online";
+    const idSheet = tipo === "todas" ? "sheet-todas" :
+                    tipo === "lifegroups" ? "sheet-lifegroups" :
+                    tipo === "novo-nascimento" ? "sheet-novo-nascimento" :
+                    "sheet-decisao-online";
+    document.getElementById(idSheet).classList.add(classeAtiva);
 }
 function showFavorites() {
-    const filtradas = fichas.filter(f => f.FAVORITO === "Sim");
+    const filtradas = ordenarAlfabetica(aplicarFiltroRede(fichas).filter(f => f.FAVORITO === "Sim"));
     document.getElementById("title").innerText = "Favoritos";
     renderCards(filtradas);
 }
@@ -162,6 +277,12 @@ function aplicarTagRede(r) {
 
 function confirmarEnvio(id) { 
     fichaPendenteEnvio = id; 
+    const checkbox = document.getElementById("toggle-destinatario-envio");
+    const container = document.getElementById("container-destinatario-envio");
+    const input = document.getElementById("input-destinatario-envio");
+    if (checkbox) checkbox.checked = false;
+    if (container) container.style.display = "none";
+    if (input) input.value = "";
     document.getElementById("modal-confirm-envio").style.display = "flex"; 
 }
 
@@ -169,10 +290,30 @@ function fecharModalEnvio() {
     document.getElementById("modal-confirm-envio").style.display = "none"; 
 }
 
+function toggleDestinatarioEnvio() {
+    const checkbox = document.getElementById("toggle-destinatario-envio");
+    const container = document.getElementById("container-destinatario-envio");
+    const input = document.getElementById("input-destinatario-envio");
+    if (!checkbox || !container) return;
+
+    container.style.display = checkbox.checked ? "block" : "none";
+    if (checkbox.checked && input) {
+        input.focus();
+    }
+}
+
 function processarEnvio() {
     const f = fichas.find(x => x.ID == fichaPendenteEnvio);
     if (!f) {
         fecharModalEnvio();
+        return;
+    }
+
+    const informarDestinatario = document.getElementById("toggle-destinatario-envio")?.checked;
+    const nomeDestinatario = (document.getElementById("input-destinatario-envio")?.value || "").trim();
+
+    if (informarDestinatario && !nomeDestinatario) {
+        alert("Informe o nome do destinatário.");
         return;
     }
 
@@ -206,8 +347,10 @@ function processarEnvio() {
     }
 
     f.FICHA_ENVIADA = "Sim";
-    renderCards(fichas);
+    f.ENVIADO_PARA = informarDestinatario ? nomeDestinatario : "";
+    renderCards(montarListaDaTelaAtual());
     salvarNaPlanilha(f.ID, "FICHA_ENVIADA", "Sim");
+    salvarNaPlanilha(f.ID, "ENVIADO_PARA", f.ENVIADO_PARA);
     
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
     fecharModalEnvio();
@@ -229,7 +372,7 @@ async function processarRestauracao() {
     const f = fichas.find(x => x.ID == fichaPendenteRestaurar);
     if(f) {
         f.FICHA_ENVIADA = "Não"; 
-        renderCards(fichas); 
+        renderCards(montarListaDaTelaAtual());
         salvarNaPlanilha(f.ID, "FICHA_ENVIADA", "Não");
     }
 }
@@ -275,9 +418,12 @@ function selecionarFiltroRede(redeConfig) {
     } else if (telaAtual === "Favoritos") {
         showFavorites();
     } else {
-        // Se estiver na Home, filtra a rede mas mantém ocultas as enviadas
-        const base = filtroRede ? fichas.filter(f => f.REDE === filtroRede) : fichas;
-        renderCards(base.filter(f => f.FICHA_ENVIADA !== "Sim"));
+        const planilha = document.getElementById("filter-planilha").value;
+        if (planilha === "lifegroups" || planilha === "novo-nascimento" || planilha === "decisao-online") {
+            filtrarPorPlanilhaRapido(planilha);
+        } else {
+            renderCards(montarListaDaTelaAtual());
+        }
     }
     
     atualizarContadores();
@@ -305,8 +451,10 @@ function aplicarFiltros() {
         let passaPlanilha = true;
         if (ft.planilha === "lifegroups") {
             passaPlanilha = f.ORIGEM === "LIFE_GROUPS_MASTER";
-        } else if (ft.planilha === "decisao") {
-            passaPlanilha = (f.ORIGEM === "NOVO_NASCIMENTO_MASTER" || f.ORIGEM === "DECISAO_POR_JESUS_ONLINE_MASTER");
+        } else if (ft.planilha === "novo-nascimento") {
+            passaPlanilha = f.ORIGEM === "NOVO_NASCIMENTO_MASTER";
+        } else if (ft.planilha === "decisao-online") {
+            passaPlanilha = f.ORIGEM === "DECISAO_POR_JESUS_ONLINE_MASTER";
         }
 
         return passaPlanilha &&
@@ -428,12 +576,99 @@ document.getElementById("fileInput").addEventListener("change", async function(e
 
 // --- BUSCA E UTILITÁRIOS ---
 
+// --- CONTROLE DE COR DA BARRA DE BUSCA ---
+function atualizarCorBusca(ctx, limparCampo = true) {
+    const wrap = document.getElementById("search-wrap");
+    const input = document.getElementById("search");
+    if (!wrap || !input) return;
+    wrap.className  = "search-wrap"  + (ctx ? " ctx-" + ctx : "");
+    input.className = ctx ? "ctx-" + ctx : "";
+    if (limparCampo) input.value = ""; // limpa a busca ao trocar de contexto
+}
+
+function filtrarPorTexto(lista, termo) {
+    const t = (termo || "").toLowerCase();
+    return lista.filter(f => {
+        const nome = (f["NOME"] || f["Nome"] || f["Nome e sobrenome"] || "").toLowerCase();
+        const bairro = (f["BAIRRO"] || f["Bairro"] || "").toLowerCase();
+        return nome.includes(t) || bairro.includes(t);
+    });
+}
+
+function origemParaPlanilha(origem) {
+    if (origem === "LIFE_GROUPS_MASTER") return "lifegroups";
+    if (origem === "NOVO_NASCIMENTO_MASTER") return "novo-nascimento";
+    if (origem === "DECISAO_POR_JESUS_ONLINE_MASTER") return "decisao-online";
+    return "";
+}
+
+function escolherDestinoBusca(resultados) {
+    if (!resultados || resultados.length === 0) return null;
+
+    const todasEnviadas = resultados.every(f => f.FICHA_ENVIADA === "Sim");
+    if (todasEnviadas) return { tipo: "enviadas" };
+
+    const planilhas = [...new Set(resultados.map(f => origemParaPlanilha(f.ORIGEM)).filter(Boolean))];
+    if (planilhas.length === 1) return { tipo: "planilha", planilha: planilhas[0] };
+
+    return null;
+}
+
+function aplicarDestinoBusca(destino) {
+    if (!destino) return;
+
+    if (destino.tipo === "enviadas") {
+        document.getElementById("filter-planilha").value = "";
+        atualizarCorBusca(null, false);
+        const total = aplicarFiltroRede(fichas).filter(f => f.FICHA_ENVIADA === "Sim").length;
+        document.getElementById("title").innerText = `Enviadas (${total})`;
+        return;
+    }
+
+    if (destino.tipo === "planilha") {
+        const tipo = destino.planilha;
+        document.getElementById("filter-planilha").value = tipo;
+
+        const nomesPlanilha = {
+            "lifegroups": "Life Groups",
+            "novo-nascimento": "Novo Nascimento",
+            "decisao-online": "Decisão Online"
+        };
+
+        const nomePlanilha = nomesPlanilha[tipo] || "easyfichas";
+        document.getElementById("title").innerText = filtroRede ? `${nomePlanilha} (${filtroRede})` : nomePlanilha;
+        atualizarCorBusca(tipo, false);
+    }
+}
+
 document.getElementById("search").addEventListener("input", (e) => {
     const t = e.target.value.toLowerCase();
-    renderCards(fichas.filter(f => 
-        (f["NOME"] || f["Nome"] || "").toLowerCase().includes(t) || 
-        (f["BAIRRO"] || f["Bairro"] || "").toLowerCase().includes(t)
-    ));
+
+    let base = montarListaDaTelaAtual();
+
+    if (!t) {
+        renderCards(base);
+        return;
+    }
+
+    let resultados = filtrarPorTexto(base, t);
+
+    const tituloAtual = document.getElementById("title").innerText || "";
+    const planilhaAtual = document.getElementById("filter-planilha").value;
+    const isHome = !tituloAtual.startsWith("Enviadas") && tituloAtual !== "Favoritos" && !planilhaAtual;
+
+    // Na Home, se não encontrou na tela atual, tenta o conjunto geral e navega para a tela correta.
+    if (isHome && resultados.length === 0) {
+        const resultadosGerais = filtrarPorTexto(aplicarFiltroRede(fichas), t);
+        const destino = escolherDestinoBusca(resultadosGerais);
+        if (destino) {
+            aplicarDestinoBusca(destino);
+            base = montarListaDaTelaAtual();
+            resultados = filtrarPorTexto(base, t);
+        }
+    }
+
+    renderCards(resultados);
 });
 
 function exportar() {
@@ -460,15 +695,14 @@ function atualizarContadores() {
     const baseFichas = filtroRede ? fichas.filter(f => f.REDE === filtroRede) : fichas;
 
     const totalLife = baseFichas.filter(f => f.ORIGEM === "LIFE_GROUPS_MASTER").length;
-    const totalDecisao = baseFichas.filter(f => 
-        f.ORIGEM === "NOVO_NASCIMENTO_MASTER" || 
-        f.ORIGEM === "DECISAO_POR_JESUS_ONLINE_MASTER"
-    ).length;
+    const totalNovoNascimento = baseFichas.filter(f => f.ORIGEM === "NOVO_NASCIMENTO_MASTER").length;
+    const totalDecisaoOnline = baseFichas.filter(f => f.ORIGEM === "DECISAO_POR_JESUS_ONLINE_MASTER").length;
 
     const totalEnviadas = baseFichas.filter(f => f.FICHA_ENVIADA === "Sim").length;
 
     document.getElementById("count-lifegroups").innerText = totalLife;
-    document.getElementById("count-decisao").innerText = totalDecisao;
+    document.getElementById("count-novo-nascimento").innerText = totalNovoNascimento;
+    document.getElementById("count-decisao-online").innerText = totalDecisaoOnline;
 
     // Atualiza o título se estiver na tela de enviadas para mostrar o total correto da rede
     const titulo = document.getElementById("title").innerText;
@@ -478,6 +712,7 @@ function atualizarContadores() {
 }
 
 function filtrarPorPlanilhaRapido(tipo) {
+    mostrarModoHome();
     // 1. Atualizamos o valor no dropdown oculto de filtros para manter sincronia
     const selectPlanilha = document.getElementById("filter-planilha");
     if(selectPlanilha) selectPlanilha.value = tipo;
@@ -488,8 +723,10 @@ function filtrarPorPlanilhaRapido(tipo) {
         let passaPlanilha = false;
         if (tipo === "lifegroups") {
             passaPlanilha = f.ORIGEM === "LIFE_GROUPS_MASTER";
-        } else if (tipo === "decisao") {
-            passaPlanilha = (f.ORIGEM === "NOVO_NASCIMENTO_MASTER" || f.ORIGEM === "DECISAO_POR_JESUS_ONLINE_MASTER");
+        } else if (tipo === "novo-nascimento") {
+            passaPlanilha = f.ORIGEM === "NOVO_NASCIMENTO_MASTER";
+        } else if (tipo === "decisao-online") {
+            passaPlanilha = f.ORIGEM === "DECISAO_POR_JESUS_ONLINE_MASTER";
         }
 
         // Filtro de Rede (se houver uma rede selecionada no momento)
@@ -498,12 +735,20 @@ function filtrarPorPlanilhaRapido(tipo) {
         return passaPlanilha && passaRede;
     });
 
+    const ordenadas = ordenarNaoEnviadasPrimeiro(filtradas);
+
     // 3. Renderiza o resultado
-    renderCards(filtradas);
+    renderCards(ordenadas);
     
-    // 4. Ajusta o título para dar feedback ao usuário
-    const nomePlanilha = tipo === "lifegroups" ? "Life Groups" : "Novo Nascimento";
+    // 4. Ajusta o título e a cor da barra de busca
+    const nomesPlanilha = {
+        "lifegroups": "Life Groups",
+        "novo-nascimento": "Novo Nascimento",
+        "decisao-online": "Decisão Online"
+    };
+    const nomePlanilha = nomesPlanilha[tipo] || "easyfichas";
     document.getElementById("title").innerText = filtroRede ? `${nomePlanilha} (${filtroRede})` : nomePlanilha;
+    atualizarCorBusca(tipo);
 }
 
 function abrirSeletorRede(id) {
