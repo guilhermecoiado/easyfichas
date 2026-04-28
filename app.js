@@ -456,24 +456,21 @@ function openWhats(t) { if(t) window.open(`https://wa.me/55${t.replace(/\D/g,"")
 function openMap(e) { if(e) window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e)}`, "_blank"); }
 
 function atualizarContadores() {
+    // Base de cálculo sempre respeita a rede se ela estiver selecionada
     const baseFichas = filtroRede ? fichas.filter(f => f.REDE === filtroRede) : fichas;
 
     const totalLife = baseFichas.filter(f => f.ORIGEM === "LIFE_GROUPS_MASTER").length;
-
-    const totalNovoNascimento = baseFichas.filter(f => 
-        f.ORIGEM === "NOVO_NASCIMENTO_MASTER"
-    ).length;
-
-    const totalDecisaoOnline = baseFichas.filter(f => 
+    const totalDecisao = baseFichas.filter(f => 
+        f.ORIGEM === "NOVO_NASCIMENTO_MASTER" || 
         f.ORIGEM === "DECISAO_POR_JESUS_ONLINE_MASTER"
     ).length;
 
     const totalEnviadas = baseFichas.filter(f => f.FICHA_ENVIADA === "Sim").length;
 
     document.getElementById("count-lifegroups").innerText = totalLife;
-    document.getElementById("count-novonascimento").innerText = totalNovoNascimento;
-    document.getElementById("count-decisao").innerText = totalDecisaoOnline;
+    document.getElementById("count-decisao").innerText = totalDecisao;
 
+    // Atualiza o título se estiver na tela de enviadas para mostrar o total correto da rede
     const titulo = document.getElementById("title").innerText;
     if (titulo.startsWith("Enviadas")) {
         document.getElementById("title").innerText = `Enviadas (${totalEnviadas})`;
@@ -481,38 +478,32 @@ function atualizarContadores() {
 }
 
 function filtrarPorPlanilhaRapido(tipo) {
+    // 1. Atualizamos o valor no dropdown oculto de filtros para manter sincronia
+    const selectPlanilha = document.getElementById("filter-planilha");
+    if(selectPlanilha) selectPlanilha.value = tipo;
 
+    // 2. Criamos a filtragem respeitando a REDE ATIVA e a ORIGEM
     const filtradas = fichas.filter(f => {
-
+        // Filtro de Origem (o que o botão clicado representa)
         let passaPlanilha = false;
-
         if (tipo === "lifegroups") {
             passaPlanilha = f.ORIGEM === "LIFE_GROUPS_MASTER";
-        } 
-        
-        else if (tipo === "novonascimento") {
-            passaPlanilha = f.ORIGEM === "NOVO_NASCIMENTO_MASTER";
-        } 
-        
-        else if (tipo === "decisaoonline") {
-            passaPlanilha = f.ORIGEM === "DECISAO_POR_JESUS_ONLINE_MASTER";
+        } else if (tipo === "decisao") {
+            passaPlanilha = (f.ORIGEM === "NOVO_NASCIMENTO_MASTER" || f.ORIGEM === "DECISAO_POR_JESUS_ONLINE_MASTER");
         }
 
+        // Filtro de Rede (se houver uma rede selecionada no momento)
         const passaRede = filtroRede ? f.REDE === filtroRede : true;
 
         return passaPlanilha && passaRede;
     });
 
+    // 3. Renderiza o resultado
     renderCards(filtradas);
-
-    let nomePlanilha = "";
-
-    if (tipo === "lifegroups") nomePlanilha = "Life Groups";
-    if (tipo === "novonascimento") nomePlanilha = "Novo Nascimento";
-    if (tipo === "decisaoonline") nomePlanilha = "Decisão Online";
-
-    document.getElementById("title").innerText =
-        filtroRede ? `${nomePlanilha} (${filtroRede})` : nomePlanilha;
+    
+    // 4. Ajusta o título para dar feedback ao usuário
+    const nomePlanilha = tipo === "lifegroups" ? "Life Groups" : "Novo Nascimento";
+    document.getElementById("title").innerText = filtroRede ? `${nomePlanilha} (${filtroRede})` : nomePlanilha;
 }
 
 function abrirSeletorRede(id) {
