@@ -60,25 +60,62 @@
             </button>
         </div>
     </div>
-    <input id="search" placeholder="Buscar nome ou bairro">
+    <div class="search-wrap" id="search-wrap">
+        <i data-lucide="search" class="search-icon"></i>
+        <input id="search" placeholder="Buscar nome ou bairro">
+    </div>
 </header>
 
-<div class="summary-shortcuts">
+<div class="summary-shortcuts" id="summary-shortcuts">
     <div class="shortcut-card lifegroups" onclick="filtrarPorPlanilhaRapido('lifegroups')">
-        <div class="shortcut-content">
-            <i data-lucide="bar-chart-2"></i>
-            <span>Lifegroups</span>
+        <div class="shortcut-icon"><i data-lucide="users"></i></div>
+        <div class="shortcut-footer">
+            <span class="shortcut-label">Lifegroups</span>
+            <span class="badge" id="count-lifegroups">0</span>
         </div>
-        <span class="badge" id="count-lifegroups">0</span>
     </div>
 
-    <div class="shortcut-card decisao" onclick="filtrarPorPlanilhaRapido('decisao')">
-        <div class="shortcut-content">
-            <i data-lucide="sparkles"></i>
-            <span>Novo Nascimento</span>
+    <div class="shortcut-card novo-nascimento" onclick="filtrarPorPlanilhaRapido('novo-nascimento')">
+        <div class="shortcut-icon"><i data-lucide="sparkles"></i></div>
+        <div class="shortcut-footer">
+            <span class="shortcut-label">Novo Nascimento</span>
+            <span class="badge" id="count-novo-nascimento">0</span>
         </div>
-        <span class="badge" id="count-decisao">0</span>
     </div>
+
+    <div class="shortcut-card decisao-online" onclick="filtrarPorPlanilhaRapido('decisao-online')">
+        <div class="shortcut-icon"><i data-lucide="globe"></i></div>
+        <div class="shortcut-footer">
+            <span class="shortcut-label">Decisão Online</span>
+            <span class="badge" id="count-decisao-online">0</span>
+        </div>
+    </div>
+</div>
+
+<div class="enviadas-filter" id="enviadas-filter" style="display:none;">
+    <span class="enviadas-filtro-label">Filtro: <strong id="enviadas-filtro-texto">Todas</strong></span>
+    <button class="enviadas-filtrar-btn" onclick="abrirFiltroEnviadas()">
+        <i data-lucide="sliders-horizontal"></i>
+        <span>Filtrar</span>
+    </button>
+</div>
+
+<div class="enviadas-sheet-backdrop" id="enviadas-backdrop" onclick="fecharFiltroEnviadas()"></div>
+<div class="enviadas-sheet" id="enviadas-sheet">
+    <div class="enviadas-sheet-handle"></div>
+    <p class="enviadas-sheet-title">Filtrar enviadas</p>
+    <button class="enviadas-sheet-item" id="sheet-todas" onclick="filtrarEnviadas('todas')">
+        <i data-lucide="layers"></i><span>Todas</span><span class="pill-badge" id="pill-count-todas">0</span>
+    </button>
+    <button class="enviadas-sheet-item" id="sheet-lifegroups" onclick="filtrarEnviadas('lifegroups')">
+        <i data-lucide="users"></i><span>Lifegroups</span><span class="pill-badge" id="pill-count-lifegroups">0</span>
+    </button>
+    <button class="enviadas-sheet-item" id="sheet-novo-nascimento" onclick="filtrarEnviadas('novo-nascimento')">
+        <i data-lucide="sparkles"></i><span>Novo Nascimento</span><span class="pill-badge" id="pill-count-novo-nascimento">0</span>
+    </button>
+    <button class="enviadas-sheet-item" id="sheet-decisao-online" onclick="filtrarEnviadas('decisao-online')">
+        <i data-lucide="globe"></i><span>Decisão Online</span><span class="pill-badge" id="pill-count-decisao-online">0</span>
+    </button>
 </div>
 <div id="cards"></div>
 
@@ -127,7 +164,8 @@
             <select id="filter-planilha" class="filter-input">
                 <option value="">Planilha (Todas)</option>
                 <option value="lifegroups">Lifegroups</option>
-                <option value="decisao">Decisão por Jesus</option>
+                <option value="novo-nascimento">Novo Nascimento</option>
+                <option value="decisao-online">Decisão Online</option>
             </select>
             <div style="display:flex; gap:10px; margin-top:10px;">
                 <button onclick="limparFiltros()" style="flex:1; background:#eee; padding:12px; border-radius:10px;">Limpar</button>
@@ -161,7 +199,17 @@
 <div id="modal-confirm-envio" class="modal" onclick="if(event.target == this) fecharModalEnvio()">
     <div class="modal-content" style="max-width: 320px; text-align: center;">
         <h3 style="margin-bottom: 10px;">Enviar Ficha?</h3>
-        <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Marcar como enviada e abrir WhatsApp?</p>
+        <p style="font-size: 14px; color: #666; margin-bottom: 14px;">Marcar como enviada e abrir WhatsApp?</p>
+        <div style="text-align: left; margin-bottom: 14px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #444; font-weight: 700; cursor: pointer;">
+                <input type="checkbox" id="toggle-destinatario-envio" onchange="toggleDestinatarioEnvio()">
+                Informar destinatário
+            </label>
+            <div id="container-destinatario-envio" style="display: none; margin-top: 10px;">
+                <label for="input-destinatario-envio" style="display: block; font-size: 12px; color: #666; margin: 0 0 6px 2px;">Nome:</label>
+                <input id="input-destinatario-envio" type="text" class="filter-input" placeholder="Para quem você enviou" style="margin-bottom: 0;">
+            </div>
+        </div>
         <div style="display: flex; gap: 10px;">
             <button onclick="fecharModalEnvio()" style="flex: 1; padding: 12px; background: #eee; border-radius: 10px;">Não</button>
             <button onclick="processarEnvio()" style="flex: 1; padding: 12px; background: var(--primary); color: white; border-radius: 10px;">Sim</button>
