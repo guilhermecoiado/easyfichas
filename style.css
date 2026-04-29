@@ -509,4 +509,177 @@ header { background: white; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.0
 .detalhe-item label { display: block; font-size: 11px; color: #888; text-transform: uppercase; font-weight: bold; }
 .detalhe-item span { font-size: 15px; color: #333; word-break: break-word; }
 .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.close-btn { background: none; border: none; font-size: 28px; cursor: pointer; color: #888; }
+.close-btn {
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    color: #6b7280;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.btn-primario {
+    width: 100%;
+    margin-top: 20px;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    background: linear-gradient(135deg, var(--primary) 0%, #5c55df 100%);
+    color: white;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 8px 18px rgba(108, 99, 255, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-primario:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(108, 99, 255, 0.32);
+}
+
+.rede-modal-content {
+    max-width: 380px;
+    padding: 18px;
+    border-radius: 22px;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfbff 100%);
+}
+
+.rede-modal-title {
+    margin: 0 0 14px;
+    text-align: center;
+    font-size: 23px;
+    font-weight: 900;
+    letter-spacing: 0.01em;
+    color: #161926;
+}
+
+.rede-divider {
+    border: 0;
+    border-top: 1px solid #ececf3;
+    margin: 10px 0;
+}
+
+.rede-list {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    max-height: min(54vh, 430px);
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.rede-option-btn {
+    width: 100%;
+    border: none;
+    border-radius: 12px;
+    padding: 13px 12px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    color: #fff;
+    background: var(--rede-color, #4b5563);
+    box-shadow: 0 6px 12px color-mix(in srgb, var(--rede-color, #4b5563) 35%, transparent);
+    transition: transform 0.17s ease, filter 0.17s ease;
+}
+
+.rede-option-btn:hover {
+    filter: brightness(1.04);
+    transform: translateY(-1px);
+}
+
+.rede-option-btn:active {
+    transform: translateY(0);
+    filter: brightness(0.97);
+}
+
+.rede-neutral-btn {
+    width: 100%;
+    border: 1px solid #d7dae4;
+    border-radius: 12px;
+    padding: 12px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 800;
+    background: linear-gradient(180deg, #fafafa 0%, #f1f2f6 100%);
+    color: #4b5563;
+    transition: all 0.2s ease;
+}
+
+.rede-neutral-btn:hover {
+    border-color: #c5c9d6;
+    color: #1f2937;
+}
+
+.install-cta {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: 92px;
+    z-index: 2501;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+    padding: 10px;
+}
+
+.install-cta-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #1f2937;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.install-cta-text i {
+    width: 16px;
+    height: 16px;
+    color: var(--primary);
+}
+
+.install-cta-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.install-cta-btn {
+    border: none;
+    border-radius: 9px;
+    padding: 10px;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    flex: 1;
+}
+
+.install-cta-btn--ghost {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.install-cta-btn--primary {
+    background: var(--primary);
+    color: white;
+}
+
+@media (min-width: 640px) {
+    .install-cta {
+        max-width: 420px;
+        margin: 0 auto;
+    }
+}
