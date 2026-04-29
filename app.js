@@ -384,7 +384,8 @@ function toggleFav(id) {
     const f = fichas.find(x => x.ID == id);
     if(f) {
         f.FAVORITO = (f.FAVORITO === "Sim") ? "Não" : "Sim";
-        renderCards(fichas);
+        renderCards(montarListaDaTelaAtual());
+        atualizarContadores();
         salvarNaPlanilha(id, "FAVORITO", f.FAVORITO);
     }
 }
@@ -393,7 +394,8 @@ function aplicarTagRede(r) {
     const f = fichas.find(x => x.ID === window.fichaParaTaguear);
     if(f) {
         f.REDE = r;
-        renderCards(fichas);
+        renderCards(montarListaDaTelaAtual());
+        atualizarContadores();
         salvarNaPlanilha(f.ID, "REDE", r);
     }
     fecharModalRede();
