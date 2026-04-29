@@ -51,11 +51,14 @@ body { font-family: system-ui, sans-serif; background: var(--bg-body); padding-b
 header { background: white; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
 .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px; }
 .brand { display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1; }
+.brand-text { min-width: 0; max-width: 100%; }
+.top-actions { flex-shrink: 0; }
 .logo-icon-host { width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; color: #111; }
 .logo-icon { width: 24px; height: 24px; }
-.title { font-size: 17px; font-weight: 800; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.title { font-size: 17px; font-weight: 800; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 
-#rede-indicator { font-size: 9px; font-weight: 800; padding: 2px 8px; border-radius: 10px; color: white; display: none; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
+#rede-indicator { font-size: 9px; font-weight: 800; padding: 2px 10px; border-radius: 10px; color: white; display: inline-block; text-transform: uppercase; white-space: nowrap; max-width: 100%; }
+#rede-indicator-row { display: none; padding: 0 15px 8px; }
 
 .refresh-btn-top { background: #f0f0ff; border: none; color: var(--primary); padding: 8px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; }
 .refresh-btn-top i { width: 18px; height: 18px; }
@@ -146,6 +149,7 @@ header { background: white; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.0
 .fav-active { fill: #FFD700 !important; color: #FFD700 !important; }
 
 .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: white; display: flex; justify-content: space-around; padding: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 25px; z-index: 2000; }
+.bottom-nav-scrim { position: fixed; bottom: 0; left: 0; right: 0; height: 110px; background: linear-gradient(to bottom, transparent, rgba(245,245,245,0.85) 40%, rgba(245,245,245,1) 100%); pointer-events: none; z-index: 1999; }
 .nav-item { border: none; background: none; display: flex; flex-direction: column; align-items: center; color: #888; flex: 1; gap: 2px; }
 .nav-item i { width: 20px; }
 .nav-label { font-size: 9px; font-weight: 700; }
