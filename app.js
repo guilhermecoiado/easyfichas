@@ -19,22 +19,18 @@ function isMobileBrowser() {
 
 function atualizarIconeTitulo(ctx) {
     const host = document.getElementById("title-icon-host");
-    if (!host || !window.lucide || !lucide.icons) return;
+    if (!host || !window.lucide || typeof lucide.createIcons !== "function") return;
 
     const mapaIcones = {
         "lifegroups": "users",
         "novo-nascimento": "sparkles",
-        "decisao-online": "globe"
+        "decisao-online": "globe",
+        "enviadas": "send"
     };
 
     const nomeIcone = mapaIcones[ctx] || "file-text";
-    const icon = lucide.icons[nomeIcone];
-    if (!icon) return;
-
-    host.innerHTML = icon.toSvg({
-        class: "logo-icon",
-        strokeWidth: 2
-    });
+    host.innerHTML = `<i data-lucide="${nomeIcone}" class="logo-icon"></i>`;
+    lucide.createIcons();
 }
 
 function forcarAtualizacao() {
@@ -304,7 +300,7 @@ function mostrarModoEnviadas() {
     document.getElementById("summary-shortcuts").style.display = "none";
     document.getElementById("enviadas-filter").style.display = "";
     document.getElementById("nao-enviadas-counter").style.display = "none";
-    atualizarIconeTitulo(null);
+    atualizarIconeTitulo("enviadas");
     // Atualiza totais dos pills
     const base = aplicarFiltroRede(fichas).filter(f => f.FICHA_ENVIADA === "Sim");
     document.getElementById("pill-count-todas").innerText          = base.length;
@@ -316,7 +312,7 @@ function mostrarModoEnviadas() {
 
 function home() { 
     document.getElementById("title").innerText = "easyfichas"; 
-    document.getElementById("rede-indicator").style.display = "none";
+    document.getElementById("rede-indicator-row").style.display = "none";
     filtroRede = null;
     document.getElementById("filter-planilha").value = "";
     atualizarCorBusca(null);
@@ -534,11 +530,11 @@ function selecionarFiltroRede(redeConfig) {
     if(redeConfig) {
         filtroRede = redeConfig.nome;
         ind.innerText = filtroRede; 
-        ind.style.display = "block";
         ind.style.backgroundColor = redeConfig.cor;
+        document.getElementById("rede-indicator-row").style.display = "block";
     } else {
         filtroRede = null;
-        ind.style.display = "none"; 
+        document.getElementById("rede-indicator-row").style.display = "none";
     }
 
     // Lógica para decidir o que renderizar após filtrar a rede
