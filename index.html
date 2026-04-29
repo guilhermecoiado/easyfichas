@@ -54,12 +54,9 @@
     <div class="header-top">
         <div class="brand">
             <span id="title-icon-host" class="logo-icon-host"></span>
-            <div style="display: flex; flex-direction: column; align-items: flex-start;">
-                <div class="title" id="title">easyfichas</div>
-                <div id="rede-indicator" style="margin-top: 4px;"></div>
-            </div>
+            <div class="title" id="title">easyfichas</div>
         </div>
-        <div style="display: flex; gap: 8px;">
+        <div class="top-actions" style="display: flex; gap: 8px;">
             <button class="refresh-btn-top" onclick="forcarAtualizacao()" title="Atualizar">
                 <i data-lucide="refresh-cw"></i>
             </button>
@@ -71,6 +68,9 @@
                 <span>Exportar</span>
             </button>
         </div>
+    </div>
+    <div id="rede-indicator-row">
+        <div id="rede-indicator"></div>
     </div>
     <div class="search-wrap" id="search-wrap">
         <i data-lucide="search" class="search-icon"></i>
@@ -137,6 +137,7 @@
 
 <div id="cards"></div>
 
+<div class="bottom-nav-scrim"></div>
 <nav class="bottom-nav">
     <button class="nav-item active" id="nav-home" onclick="home()">
         <i data-lucide="home"></i>
