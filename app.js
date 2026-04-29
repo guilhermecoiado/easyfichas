@@ -740,7 +740,7 @@ function aplicarDestinoBusca(destino) {
         };
 
         const nomePlanilha = nomesPlanilha[tipo] || "easyfichas";
-        document.getElementById("title").innerText = filtroRede ? `${nomePlanilha} (${filtroRede})` : nomePlanilha;
+        document.getElementById("title").innerText = nomePlanilha;
         atualizarCorBusca(tipo, false);
     }
 }
@@ -867,7 +867,7 @@ function filtrarPorPlanilhaRapido(tipo) {
         "decisao-online": "Decisão Online"
     };
     const nomePlanilha = nomesPlanilha[tipo] || "easyfichas";
-    document.getElementById("title").innerText = filtroRede ? `${nomePlanilha} (${filtroRede})` : nomePlanilha;
+    document.getElementById("title").innerText = nomePlanilha;
     atualizarCorBusca(tipo);
 }
 
