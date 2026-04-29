@@ -193,12 +193,12 @@
 </div>
 
 <div id="modal-rede" class="modal" onclick="if(event.target == this) fecharModalRede()">
-    <div class="modal-content" style="max-width: 350px;">
-        <h3 style="margin-bottom: 20px; text-align: center;">Vincular à Rede:</h3>
-        <div id="container-seletor-redes" style="display: flex; flex-direction: column; gap: 8px;">
+    <div class="modal-content rede-modal-content">
+        <h3 class="rede-modal-title">Vincular a Rede</h3>
+        <div id="container-seletor-redes" class="rede-list">
             </div>
-        <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
-        <button onclick="aplicarTagRede('')" style="background:#eee; color:#666; padding:12px; border-radius:10px; width: 100%;">Remover Rede</button>
+        <hr class="rede-divider">
+        <button onclick="aplicarTagRede('')" class="rede-neutral-btn">Remover Rede</button>
     </div>
 </div>
 
@@ -251,16 +251,16 @@
             <button onclick="fecharModalDetalhes()" class="close-btn">&times;</button>
         </div>
         <div id="detalhes-content"></div>
-        <button onclick="fecharModalDetalhes()" class="btn-primario" style="margin-top:20px; width:100%;">Fechar</button>
+        <button onclick="fecharModalDetalhes()" class="btn-primario">Fechar</button>
     </div>
 </div>
 <div id="modal-filtro-rede" class="modal" onclick="if(event.target == this) fecharFiltroRede()">
-    <div class="modal-content" style="max-width: 350px;">
-        <h3 style="margin-bottom: 20px; text-align: center;">Filtrar por Rede:</h3>
-        <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
-        <button onclick="selecionarFiltroRede(null)" style="background:#eee; color:#666; padding:12px; border-radius:10px; width: 100%; border: none; font-weight: bold; cursor: pointer;">Ver Todas as Redes</button>
-        <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
-        <div id="container-filtro-redes" style="display: flex; flex-direction: column; gap: 8px;">
+    <div class="modal-content rede-modal-content">
+        <h3 class="rede-modal-title">Filtrar por Rede</h3>
+        <hr class="rede-divider">
+        <button onclick="selecionarFiltroRede(null)" class="rede-neutral-btn">Ver Todas as Redes</button>
+        <hr class="rede-divider">
+        <div id="container-filtro-redes" class="rede-list">
             </div>
     </div>
 </div>
