@@ -13,6 +13,10 @@ function isStandaloneMode() {
     return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
 }
 
+function isMobileBrowser() {
+    return /android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent || "");
+}
+
 function forcarAtualizacao() {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(regs => {
@@ -34,7 +38,7 @@ function isInstallCtaDismissed() {
 
 function showInstallCta() {
     const cta = document.getElementById("install-cta");
-    if (!cta || isStandaloneMode() || isInstallCtaDismissed()) return;
+    if (!cta || isStandaloneMode() || !isMobileBrowser() || isInstallCtaDismissed()) return;
     cta.hidden = false;
     lucide.createIcons();
 }
@@ -93,7 +97,7 @@ function setupPwaInstallPrompt() {
         localStorage.removeItem(INSTALL_CTA_DISMISSED_UNTIL_KEY);
     });
 
-    if (!isStandaloneMode() && !isInstallCtaDismissed() && isIosDevice()) {
+    if (!isStandaloneMode() && isMobileBrowser() && !isInstallCtaDismissed() && isIosDevice()) {
         showInstallCta();
     }
 }
