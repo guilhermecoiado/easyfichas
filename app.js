@@ -259,11 +259,13 @@ function montarListaDaTelaAtual() {
 function mostrarModoHome() {
     document.getElementById("summary-shortcuts").style.display = "";
     document.getElementById("enviadas-filter").style.display = "none";
+    document.getElementById("nao-enviadas-counter").style.display = "";
 }
 
 function mostrarModoEnviadas() {
     document.getElementById("summary-shortcuts").style.display = "none";
     document.getElementById("enviadas-filter").style.display = "";
+    document.getElementById("nao-enviadas-counter").style.display = "none";
     // Atualiza totais dos pills
     const base = aplicarFiltroRede(fichas).filter(f => f.FICHA_ENVIADA === "Sim");
     document.getElementById("pill-count-todas").innerText          = base.length;
@@ -336,6 +338,7 @@ function filtrarEnviadas(tipo) {
 function showFavorites() {
     const filtradas = ordenarAlfabetica(aplicarFiltroRede(fichas).filter(f => f.FAVORITO === "Sim"));
     document.getElementById("title").innerText = "Favoritos";
+    document.getElementById("nao-enviadas-counter").style.display = "none";
     renderCards(filtradas);
 }
 
@@ -776,6 +779,16 @@ function exportar() {
 function openWhats(t) { if(t) window.open(`https://wa.me/55${t.replace(/\D/g,"")}`, "_blank"); }
 function openMap(e) { if(e) window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e)}`, "_blank"); }
 
+function atualizarContadorNaoEnviadas(base) {
+    const count = base.filter(f => f.FICHA_ENVIADA !== "Sim").length;
+    const el = document.getElementById("nao-enviadas-counter");
+    const countEl = document.getElementById("count-nao-enviadas");
+    if (el && countEl) {
+        countEl.innerText = count;
+    }
+    lucide.createIcons();
+}
+
 function atualizarContadores() {
     // Base de cálculo sempre respeita a rede se ela estiver selecionada
     const baseFichas = filtroRede ? fichas.filter(f => f.REDE === filtroRede) : fichas;
@@ -789,6 +802,9 @@ function atualizarContadores() {
     document.getElementById("count-lifegroups").innerText = totalLife;
     document.getElementById("count-novo-nascimento").innerText = totalNovoNascimento;
     document.getElementById("count-decisao-online").innerText = totalDecisaoOnline;
+
+    // Atualiza contador de não enviadas (home = todas as planilhas)
+    atualizarContadorNaoEnviadas(baseFichas);
 
     // Atualiza o título se estiver na tela de enviadas para mostrar o total correto da rede
     const titulo = document.getElementById("title").innerText;
@@ -825,6 +841,9 @@ function filtrarPorPlanilhaRapido(tipo) {
 
     // 3. Renderiza o resultado
     renderCards(ordenadas);
+
+    // Atualiza contador de não enviadas para a planilha selecionada
+    atualizarContadorNaoEnviadas(filtradas);
     
     // 4. Ajusta o título e a cor da barra de busca
     const nomesPlanilha = {
