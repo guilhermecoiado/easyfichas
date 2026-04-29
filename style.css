@@ -55,6 +55,8 @@ header { background: white; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.0
 
 #rede-indicator { font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 10px; color: white; display: none; text-transform: uppercase; }
 
+.refresh-btn-top { background: #f0f0ff; border: none; color: var(--primary); padding: 8px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; }
+.refresh-btn-top i { width: 18px; height: 18px; }
 .fav-btn-top { background: #FFF9E6; border: none; color: #FFD600; padding: 8px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; }
 .fav-btn-top i { width: 18px; height: 18px; fill: #FFD600; }
 .export-btn-top { border: none; background: #f0f0ff; color: var(--primary); padding: 8px 12px; border-radius: 10px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px; }
