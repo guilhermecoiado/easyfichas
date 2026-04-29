@@ -474,7 +474,8 @@ function toggleRede() {
     CONFIG_REDES.forEach(rede => {
         const btn = document.createElement("button");
         btn.innerText = rede.nome;
-        btn.style.cssText = `background: ${rede.cor}; color: white; padding: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold;`;
+        btn.className = "rede-option-btn";
+        btn.style.setProperty("--rede-color", rede.cor || "#4b5563");
         btn.onclick = () => selecionarFiltroRede(rede);
         container.appendChild(btn);
     });
@@ -846,7 +847,8 @@ function abrirSeletorRede(id) {
     CONFIG_REDES.forEach(rede => {
         const btn = document.createElement("button");
         btn.innerText = rede.nome;
-        btn.style.cssText = `background: ${rede.cor}; color: white; padding: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold;`;
+        btn.className = "rede-option-btn";
+        btn.style.setProperty("--rede-color", rede.cor || "#4b5563");
         btn.onclick = () => aplicarTagRede(rede.nome);
         container.appendChild(btn);
     });
