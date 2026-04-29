@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#3F51B5">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="EasyFichas">
     <title>easyfichas</title>
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
@@ -258,7 +264,18 @@
             </div>
     </div>
 </div>
-<link rel="manifest" href="manifest.json">
+
+<div id="install-cta" class="install-cta" hidden>
+        <div class="install-cta-text">
+                <i data-lucide="smartphone"></i>
+                <span>Instale o EasyFichas no seu celular</span>
+        </div>
+        <div class="install-cta-actions">
+                <button id="install-cta-dismiss" class="install-cta-btn install-cta-btn--ghost">Agora nao</button>
+                <button id="install-cta-action" class="install-cta-btn install-cta-btn--primary">Instalar</button>
+        </div>
+</div>
+
 <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js');
