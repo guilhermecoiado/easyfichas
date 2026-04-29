@@ -4,6 +4,91 @@ let filtroRede = null;
 let fichaPendenteEnvio = null;
 let fichaPendenteRestaurar = null; // Variável global para controle
 let tentativasLogin = 0;
+let deferredInstallPrompt = null;
+
+const INSTALL_CTA_DISMISSED_UNTIL_KEY = "easyfichas_install_cta_dismissed_until";
+const INSTALL_CTA_DISMISS_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
+function isStandaloneMode() {
+    return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+}
+
+function isIosDevice() {
+    return /iphone|ipad|ipod/i.test(navigator.userAgent);
+}
+
+function isInstallCtaDismissed() {
+    const until = Number(localStorage.getItem(INSTALL_CTA_DISMISSED_UNTIL_KEY) || 0);
+    return until > Date.now();
+}
+
+function showInstallCta() {
+    const cta = document.getElementById("install-cta");
+    if (!cta || isStandaloneMode() || isInstallCtaDismissed()) return;
+    cta.hidden = false;
+    lucide.createIcons();
+}
+
+function hideInstallCta() {
+    const cta = document.getElementById("install-cta");
+    if (!cta) return;
+    cta.hidden = true;
+}
+
+function dismissInstallCta() {
+    localStorage.setItem(INSTALL_CTA_DISMISSED_UNTIL_KEY, String(Date.now() + INSTALL_CTA_DISMISS_TTL_MS));
+    hideInstallCta();
+}
+
+async function triggerInstallPrompt() {
+    if (isStandaloneMode()) {
+        hideInstallCta();
+        return;
+    }
+
+    if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        const result = await deferredInstallPrompt.userChoice;
+        if (result.outcome === "accepted") {
+            hideInstallCta();
+        }
+        deferredInstallPrompt = null;
+        return;
+    }
+
+    if (isIosDevice()) {
+        alert("Para instalar no iPhone: toque em Compartilhar e depois em Adicionar \\u00e0 Tela de In\\u00edcio.");
+        return;
+    }
+
+    alert("No Android, use o menu do navegador e toque em Instalar app ou Adicionar \\u00e0 tela inicial.");
+}
+
+function setupPwaInstallPrompt() {
+    const installBtn = document.getElementById("install-cta-action");
+    const dismissBtn = document.getElementById("install-cta-dismiss");
+
+    if (installBtn) installBtn.addEventListener("click", triggerInstallPrompt);
+    if (dismissBtn) dismissBtn.addEventListener("click", dismissInstallCta);
+
+    window.addEventListener("beforeinstallprompt", (event) => {
+        event.preventDefault();
+        deferredInstallPrompt = event;
+        showInstallCta();
+    });
+
+    window.addEventListener("appinstalled", () => {
+        deferredInstallPrompt = null;
+        hideInstallCta();
+        localStorage.removeItem(INSTALL_CTA_DISMISSED_UNTIL_KEY);
+    });
+
+    if (!isStandaloneMode() && !isInstallCtaDismissed() && isIosDevice()) {
+        showInstallCta();
+    }
+}
+
+setupPwaInstallPrompt();
 
 // Função para verificar se já existe login salvo ao abrir o app
 function verificarLoginSalvo() {
