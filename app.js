@@ -13,6 +13,16 @@ function isStandaloneMode() {
     return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
 }
 
+function forcarAtualizacao() {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(regs => {
+            regs.forEach(reg => reg.unregister());
+        });
+    }
+    // Limpa cache do navegador e recarrega sem usar cache
+    window.location.reload(true);
+}
+
 function isIosDevice() {
     return /iphone|ipad|ipod/i.test(navigator.userAgent);
 }
