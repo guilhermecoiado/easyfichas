@@ -363,7 +363,7 @@ header { background: white; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.0
     display: flex;
     align-items: center;
     gap: 8px;
-    margin: 0 12px 10px;
+    margin: 0 15px 10px;
     padding: 9px 14px;
     border-radius: 12px;
     background: #fff3e0;
@@ -371,9 +371,7 @@ header { background: white; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.0
     color: #e65100;
     font-size: 13px;
     font-weight: 600;
-    max-width: calc(640px - 24px);
-    margin-left: auto;
-    margin-right: auto;
+    max-width: calc(640px - 30px);
     box-shadow: 0 2px 8px rgba(230, 81, 0, 0.08);
 }
 .nao-enviadas-counter i {
