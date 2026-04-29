@@ -49,11 +49,11 @@
 
 body { font-family: system-ui, sans-serif; background: var(--bg-body); padding-bottom: 110px; overflow-x: hidden; }
 header { background: white; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
-.header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.brand { display: flex; align-items: center; gap: 8px; }
-.title { font-size: 20px; font-weight: 800; }
+.header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px; }
+.brand { display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1; }
+.title { font-size: 17px; font-weight: 800; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-#rede-indicator { font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 10px; color: white; display: none; text-transform: uppercase; }
+#rede-indicator { font-size: 9px; font-weight: 800; padding: 2px 8px; border-radius: 10px; color: white; display: none; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
 
 .refresh-btn-top { background: #f0f0ff; border: none; color: var(--primary); padding: 8px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; }
 .refresh-btn-top i { width: 18px; height: 18px; }
@@ -104,7 +104,7 @@ header { background: white; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.0
 .card-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 8px; margin-bottom: 10px; }
 .name { text-transform: uppercase; font-size: 17px; font-weight: 700; color: #333; }
 
-.tag-rede { color: white; font-size: 9px; font-weight: 800; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; margin-top: 6px; display: inline-block; }
+.tag-rede { color: white; font-size: 8px; font-weight: 800; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; margin-top: 6px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 
 .tag-destinatario {
     display: inline-flex;
@@ -116,6 +116,10 @@ header { background: white; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.0
     font-weight: 700;
     padding: 4px 8px;
     border-radius: 999px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
 }
 
 .tag-destinatario i {
@@ -365,7 +369,7 @@ header { background: white; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.0
     display: flex;
     align-items: center;
     gap: 8px;
-    margin: 0 15px 10px;
+    margin: 0 auto 10px;
     padding: 9px 14px;
     border-radius: 12px;
     background: #fff3e0;
@@ -373,9 +377,8 @@ header { background: white; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.0
     color: #e65100;
     font-size: 13px;
     font-weight: 600;
+    width: calc(100% - 30px);
     max-width: calc(640px - 30px);
-    margin-left: auto;
-    margin-right: auto;
     box-shadow: 0 2px 8px rgba(230, 81, 0, 0.08);
 }
 .nao-enviadas-counter i {
