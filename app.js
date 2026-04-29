@@ -187,6 +187,7 @@ async function init() {
     if(Array.isArray(fichas)) {
         // Inicializa mostrando apenas as não enviadas em ordem alfabética
         const naoEnviadas = ordenarAlfabetica(fichas.filter(f => f.FICHA_ENVIADA !== "Sim"));
+        mostrarModoHome();
         renderCards(naoEnviadas);
         configurarDropdowns();
         atualizarContadores();
