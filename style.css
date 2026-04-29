@@ -725,6 +725,19 @@ header { background: white; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.0
     color: white;
 }
 
+@media (min-width: 1024px) {
+    .bottom-nav {
+        justify-content: center;
+        gap: 16px;
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+
+    .nav-item {
+        flex: 0 0 96px;
+    }
+}
+
 @media (min-width: 640px) {
     .install-cta-panel {
         max-width: 420px;
