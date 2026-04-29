@@ -17,6 +17,26 @@ function isMobileBrowser() {
     return /android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent || "");
 }
 
+function atualizarIconeTitulo(ctx) {
+    const host = document.getElementById("title-icon-host");
+    if (!host || !window.lucide || !lucide.icons) return;
+
+    const mapaIcones = {
+        "lifegroups": "users",
+        "novo-nascimento": "sparkles",
+        "decisao-online": "globe"
+    };
+
+    const nomeIcone = mapaIcones[ctx] || "file-text";
+    const icon = lucide.icons[nomeIcone];
+    if (!icon) return;
+
+    host.innerHTML = icon.toSvg({
+        class: "logo-icon",
+        strokeWidth: 2
+    });
+}
+
 function forcarAtualizacao() {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(regs => {
@@ -103,6 +123,7 @@ function setupPwaInstallPrompt() {
 }
 
 setupPwaInstallPrompt();
+atualizarIconeTitulo(null);
 
 // Função para verificar se já existe login salvo ao abrir o app
 function verificarLoginSalvo() {
@@ -209,6 +230,7 @@ async function init() {
     
     setTimeout(() => {
         if(loader) loader.classList.add("loader-hidden");
+        atualizarIconeTitulo(null);
         lucide.createIcons();
     }, 1500);
 }
@@ -275,12 +297,14 @@ function mostrarModoHome() {
     document.getElementById("summary-shortcuts").style.display = "";
     document.getElementById("enviadas-filter").style.display = "none";
     document.getElementById("nao-enviadas-counter").style.display = "";
+    atualizarIconeTitulo(document.getElementById("filter-planilha")?.value || null);
 }
 
 function mostrarModoEnviadas() {
     document.getElementById("summary-shortcuts").style.display = "none";
     document.getElementById("enviadas-filter").style.display = "";
     document.getElementById("nao-enviadas-counter").style.display = "none";
+    atualizarIconeTitulo(null);
     // Atualiza totais dos pills
     const base = aplicarFiltroRede(fichas).filter(f => f.FICHA_ENVIADA === "Sim");
     document.getElementById("pill-count-todas").innerText          = base.length;
@@ -354,6 +378,7 @@ function showFavorites() {
     const filtradas = ordenarAlfabetica(aplicarFiltroRede(fichas).filter(f => f.FAVORITO === "Sim"));
     document.getElementById("title").innerText = "Favoritos";
     document.getElementById("nao-enviadas-counter").style.display = "none";
+    atualizarIconeTitulo(null);
     renderCards(filtradas);
 }
 
@@ -687,6 +712,7 @@ function atualizarCorBusca(ctx, limparCampo = true) {
     if (!wrap || !input) return;
     wrap.className  = "search-wrap"  + (ctx ? " ctx-" + ctx : "");
     input.className = ctx ? "ctx-" + ctx : "";
+    atualizarIconeTitulo(ctx);
     if (limparCampo) input.value = ""; // limpa a busca ao trocar de contexto
 }
 
